@@ -29,7 +29,7 @@ namespace MynjenDook
 
         void Awake()
         {
-            MakeSureCamera(); // 因为camera中途不会被删除，初始化一次即可。 但rendertexture可能被删掉，每次画都要检查
+           
         }
 
         void Start()
@@ -39,6 +39,12 @@ namespace MynjenDook
         void Update()
         {
         }
+
+        public void Initialize()
+        {
+            MakeSureCamera(); // 因为camera中途不会被删除，初始化一次即可。 但rendertexture可能被删掉，每次画都要检查
+        }
+
 
         // This is called when it's known that the object will be rendered by some
         // camera. We render reflections and do other updates here.

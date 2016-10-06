@@ -40,9 +40,14 @@ namespace MynjenDook
         {
         }
 
-        void InitWaterParams()
+        public void Initialize()
         {
-            Params.Clear();
+            InitWaterParams();
+        }
+
+        private void InitWaterParams()
+        {
+            if (Params.Count > 0) return;
             Params.Add(new Param("WaterColorR", 0.12f, false));
             Params.Add(new Param("WaterColorG", 0.22f, false));
             Params.Add(new Param("WaterColorB", 0.29f, false));

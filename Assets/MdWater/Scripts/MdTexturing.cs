@@ -10,9 +10,7 @@ namespace MynjenDook
     {
         void Awake()
         {
-            InitHeightMaps();
-            InitCausticsMaps();
-            InitNormapMaps();
+
         }
 
         void Start()
@@ -28,15 +26,22 @@ namespace MynjenDook
         {
         }
 
-        void InitHeightMaps()
+        public void Initialize()
+        {
+            InitHeightMaps();
+            InitCausticsMaps();
+            InitNormapMaps();
+        }
+
+        private void InitHeightMaps()
         {
 
         }
-        void InitCausticsMaps()
+        private void InitCausticsMaps()
         {
 
         }
-        void InitNormapMaps()
+        private void InitNormapMaps()
         {
 
         }

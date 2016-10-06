@@ -9,20 +9,6 @@ namespace MynjenDook
     [RequireComponent(typeof(MdWater))]
     public class MdPredefinition : MonoBehaviour
     {
-        void Awake()
-        {
-            SetupPredefinitions();
-        }
-        void Start()
-        {
-        }
-        void OnDestroy()
-        {
-        }
-        void Update()
-        {
-        }
-
         public enum Macro
         {
             n_packsize = 4,
@@ -119,7 +105,27 @@ namespace MynjenDook
         float[] a_vspacing1 = new float[3];
         float[] a_vspacing2 = new float[3];
 
-        public void SetupPredefinitions()
+
+        void Awake()
+        {
+        }
+        void Start()
+        {
+        }
+        void OnDestroy()
+        {
+        }
+        void Update()
+        {
+        }
+
+
+        public void Initialize()
+        {
+            SetupPredefinitions();
+        }
+
+        private void SetupPredefinitions()
         {
             int[] BITS = { 2, 4, 5 }; // 5最好
             float[] WATERL = { 40000f, 10000f, 10000f }; // 低配由于只有ring0，所以ring0的边长要非常大

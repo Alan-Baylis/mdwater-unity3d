@@ -9,6 +9,12 @@ namespace MynjenDook
     {
         void Awake()
         {
+            GetComponent<MdPredefinition>().Initialize();
+            GetComponent<MdOldParams>().Initialize();
+            GetComponent<MdUserParams>().Initialize();
+            GetComponent<MdTexturing>().Initialize();
+            GetComponent<MdReflection>().Initialize();
+
             InitializeWaterMeshes();
         }
 
