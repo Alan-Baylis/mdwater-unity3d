@@ -20,9 +20,7 @@ public class MMWater : MonoBehaviour {
 
     private void InitializeWaterMeshes()
     {
-        GameObject waterMesh = transform.Find("WaterMesh").gameObject;
-
-        MeshFilter meshFilter = waterMesh.GetComponent<MeshFilter>();
+        MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
         meshFilter.mesh.Clear();
         Mesh newMesh = CreateMesh(2);
         meshFilter.mesh = newMesh;
