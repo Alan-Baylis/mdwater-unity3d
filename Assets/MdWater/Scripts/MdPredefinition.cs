@@ -42,6 +42,10 @@ namespace MynjenDook
             water_cpu_normal = 0,
             watercaustics = 32,									    // 刻蚀图数量(0-31)
             waternormals = 60,									    // 法线图数量(1-60)
+
+            // 原来在surface.cpp里
+            gridsize_x = 256,
+            gridsize_y = 256,
         }
 
         //////////////////////////////////////////////////////////////////////////

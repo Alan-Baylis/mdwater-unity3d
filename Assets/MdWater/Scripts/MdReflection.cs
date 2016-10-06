@@ -29,7 +29,7 @@ namespace MynjenDook
 
         void Awake()
         {
-           
+            MakeSureCamera();
         }
 
         void Start()

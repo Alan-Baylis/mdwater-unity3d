@@ -9,13 +9,7 @@ namespace MynjenDook
     {
         void Awake()
         {
-            GetComponent<MdPredefinition>().Initialize();
-            GetComponent<MdOldParams>().Initialize();
-            GetComponent<MdUserParams>().Initialize();
-            GetComponent<MdTexturing>().Initialize();
-            GetComponent<MdReflection>().Initialize();
-
-            InitializeWaterMeshes();
+            Initialize();
         }
 
         void Start()
@@ -38,12 +32,30 @@ namespace MynjenDook
         {
         }
 
-        private void InitializeWaterMeshes()
+        public void Initialize()
+        {
+            GetComponent<MdPredefinition>().Initialize();
+            GetComponent<MdOldParams>().Initialize();
+            GetComponent<MdUserParams>().Initialize();
+            GetComponent<MdTexturing>().Initialize();
+            GetComponent<MdReflection>().Initialize();
+            int maxProfile = CheckHardware();
+            GetComponent<MdSurface>().Initialize(Vector3.zero, Vector3.up, (int)MdPredefinition.Macro.gridsize_x, (int)MdPredefinition.Macro.gridsize_y, maxProfile);
+
+            BuildWaterMeshes();
+        }
+
+        private void BuildWaterMeshes()
         {
             MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
             meshFilter.mesh.Clear();
             Mesh newMesh = MMMeshCreator.CreateMesh(2);
             meshFilter.mesh = newMesh;
+        }
+
+        private int CheckHardware()
+        {
+            return 2; // todo.ksh: 
         }
 
         [ContextMenu("Test")]
