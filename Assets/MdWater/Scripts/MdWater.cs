@@ -3,15 +3,28 @@ using System.Collections;
 
 namespace MynjenDook
 {
+    [AddComponentMenu("MynjenDook/MdWater")]
+    [DisallowMultipleComponent]
     public class MdWater : MonoBehaviour
     {
-
         void Awake()
         {
             InitializeWaterMeshes();
         }
 
         void Start()
+        {
+        }
+
+        void OnDestroy()
+        {
+
+        }
+
+        void OnEnable()
+        {
+        }
+        void OnDisable()
         {
         }
 
