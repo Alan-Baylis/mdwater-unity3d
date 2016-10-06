@@ -3,18 +3,18 @@ using System.Collections;
 
 public static class MMMeshCreator
 {
-    public static Mesh CreateWaterMesh()
+    static public Mesh CreateMesh(float sideLen)
     {
-        float width = 2;
-        float height = 2;
+        float width = sideLen;
+        float height = sideLen;
 
         Mesh mesh = new Mesh();
-        mesh.name = "ScriptedMesh";
+        mesh.name = "WaterMesh";
         mesh.vertices = new Vector3[] {
-            new Vector3(-width,0, -height),
-            new Vector3(width, 0, -height),
-            new Vector3(width, 0, height),
-            new Vector3(-width,0, height)
+            new Vector3(-width, 0, -height),
+            new Vector3( width, 0, -height),
+            new Vector3( width, 0,  height),
+            new Vector3(-width, 0,  height)
         };
         mesh.uv = new Vector2[] {
             new Vector2 (0, 0),
@@ -27,5 +27,4 @@ public static class MMMeshCreator
 
         return mesh;
     }
-
 }
