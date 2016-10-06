@@ -1,4 +1,4 @@
-﻿Shader "FX/MirrorReflection"
+﻿Shader "MMWater/MMWater"
 {
 	Properties
 	{
