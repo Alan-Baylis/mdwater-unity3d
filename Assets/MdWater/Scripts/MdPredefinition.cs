@@ -11,6 +11,12 @@ namespace MynjenDook
     {
         public enum Macro
         {
+            // 下面3个用作bool值（来自SoftwareNoiseMaker）
+            SSE = 0, // SSE is broken atm
+            quadpipe = 0,
+            packednoise = 1,
+
+
             n_packsize = 4,
             n_dec_bits = 12,
             n_dec_magn = 4096,
@@ -50,64 +56,64 @@ namespace MynjenDook
 
         //////////////////////////////////////////////////////////////////////////
         // 供使用的全局变量
-        int n_bits;
-        int n_size;
-        int n_size_m1;
-        int n_size_sq;
-        int n_size_sq_m1;
+        public int n_bits;
+        public int n_size;
+        public int n_size_m1;
+        public int n_size_sq;
+        public int n_size_sq_m1;
 
-        int np_bits;
-        int np_size;
-        int np_size_m1;
-        int np_size_sq;
-        int np_size_sq_m1;
+        public int np_bits;
+        public int np_size;
+        public int np_size_m1;
+        public int np_size_sq;
+        public int np_size_sq_m1;
 
         // 最新做法是： ring0边长100米有4个，ring1、ring2边长是200米。这样水总边长是1000米(中配、高配)
-        float waterl0;                                              // ring0边长低配400米，中配高配100米
-        float waterl1;                                              // 一个ring1的水块边长必须与ring0相等（共 8个）
-        float waterl2;                                              // 一个ring2的水块边长必须与ring0相等（共16个）
-        float waterr0;                                              // ring0包括tcorner的半径
-        float waterr1;                                              // 全部ring1的半径300米
-        float waterr2;                                              // 全部ring2的半径500米
-        float waterr;                                               // 整个水的半径是500米
+        public float waterl0;                                              // ring0边长低配400米，中配高配100米
+        public float waterl1;                                              // 一个ring1的水块边长必须与ring0相等（共 8个）
+        public float waterl2;                                              // 一个ring2的水块边长必须与ring0相等（共16个）
+        public float waterr0;                                              // ring0包括tcorner的半径
+        public float waterr1;                                              // 全部ring1的半径300米
+        public float waterr2;                                              // 全部ring2的半径500米
+        public float waterr;                                               // 整个水的半径是500米
 
-        int waterlv0;                                               // ring0：内层水块ring0（4个）边长顶点数
-        int waterlv1;                                               // ring1：次密集水块（共 8个）边长顶点数
-        int waterlv2;                                               // ring2：最远处水块（共16个）边长顶点数
-        int waterlv0sq;
-        int waterlv1sq;
-        int waterlv2sq;
+        public int waterlv0;                                               // ring0：内层水块ring0（4个）边长顶点数
+        public int waterlv1;                                               // ring1：次密集水块（共 8个）边长顶点数
+        public int waterlv2;                                               // ring2：最远处水块（共16个）边长顶点数
+        public int waterlv0sq;
+        public int waterlv1sq;
+        public int waterlv2sq;
 
-        float vspacing0;                                            // 顶点间距离
-        float vspacing1;
-        float vspacing2;
+        public float vspacing0;                                            // 顶点间距离
+        public float vspacing1;
+        public float vspacing2;
 
 
         //////////////////////////////////////////////////////////////////////////
         // 数组，个数都为3，分别为低配，中配，高配
-        int[] a_n_bits = new int[3];
-        int[] a_n_size = new int[3];
-        int[] a_n_size_m1 = new int[3];
-        int[] a_n_size_sq = new int[3];
-        int[] a_n_size_sq_m1 = new int[3];
+        public int[] a_n_bits = new int[3];
+        public int[] a_n_size = new int[3];
+        public int[] a_n_size_m1 = new int[3];
+        public int[] a_n_size_sq = new int[3];
+        public int[] a_n_size_sq_m1 = new int[3];
 
-        int[] a_np_bits = new int[3];
-        int[] a_np_size = new int[3];
-        int[] a_np_size_m1 = new int[3];
-        int[] a_np_size_sq = new int[3];
-        int[] a_np_size_sq_m1 = new int[3];
+        public int[] a_np_bits = new int[3];
+        public int[] a_np_size = new int[3];
+        public int[] a_np_size_m1 = new int[3];
+        public int[] a_np_size_sq = new int[3];
+        public int[] a_np_size_sq_m1 = new int[3];
 
-        float[] a_waterl0 = new float[3];
+        public float[] a_waterl0 = new float[3];
 
-        int[] a_waterlv0 = new int[3];
-        int[] a_waterlv1 = new int[3];
-        int[] a_waterlv2 = new int[3];
-        int[] a_waterlv0sq = new int[3];
-        int[] a_waterlv1sq = new int[3];
-        int[] a_waterlv2sq = new int[3];
-        float[] a_vspacing0 = new float[3];
-        float[] a_vspacing1 = new float[3];
-        float[] a_vspacing2 = new float[3];
+        public int[] a_waterlv0 = new int[3];
+        public int[] a_waterlv1 = new int[3];
+        public int[] a_waterlv2 = new int[3];
+        public int[] a_waterlv0sq = new int[3];
+        public int[] a_waterlv1sq = new int[3];
+        public int[] a_waterlv2sq = new int[3];
+        public float[] a_vspacing0 = new float[3];
+        public float[] a_vspacing1 = new float[3];
+        public float[] a_vspacing2 = new float[3];
 
 
         void Awake()

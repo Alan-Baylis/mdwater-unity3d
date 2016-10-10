@@ -124,5 +124,18 @@ namespace MynjenDook
             Params.Add(new Param(pParameters.p_bDiffuseRefl.ToString(), "Diffuse sky reflection", false));
         }
 
+        public int GetIValue(pParameters p)
+        {
+            return Params[(int)p].m_iValue;
+        }
+        public float GetFValue(pParameters p)
+        {
+            return Params[(int)p].m_fValue;
+        }
+        public bool GetBValue(pParameters p)
+        {
+            return Params[(int)p].m_bValue;
+        }
+
     }
 }

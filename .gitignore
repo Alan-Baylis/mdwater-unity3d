@@ -28,3 +28,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+/Assets/ConsoleE/Editor/ConsoleE_TabSettings
+/Assets/ConsoleE/Editor/ConsoleE_TabSettings.meta

@@ -9,7 +9,7 @@ namespace MynjenDook
     [AddComponentMenu("MynjenDook/MdReflection")]
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(MdWater))]
+    //[RequireComponent(typeof(MdWater))] // 搬到submesh里，不需要water组件（父亲结点才绑water）
     public class MdReflection : MonoBehaviour
     {
         public bool m_DisablePixelLights = true;

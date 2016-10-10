@@ -5,10 +5,10 @@ namespace MynjenDook
 {
     public static class MMMeshCreator
     {
-        static public Mesh CreateMesh(float sideLen)
+        static public Mesh CreateMesh(float profile)
         {
-            float width = sideLen;
-            float height = sideLen;
+            float width = 2;
+            float height = 2;
 
             Mesh mesh = new Mesh();
             mesh.name = "WaterMesh";

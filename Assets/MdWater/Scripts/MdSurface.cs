@@ -9,6 +9,16 @@ namespace MynjenDook
     [RequireComponent(typeof(MdWater))]
     public class MdSurface : MonoBehaviour // 幸好unity和dx都是左手系
     {
+        private MdWater m_water = null;
+        public MdWater Water {
+            get {
+                m_water = GetComponent<MdWater>();
+                return m_water;
+            }
+        }
+
+        public NoiseMaker m_noiseMaker = null;
+
         enum RenderMode
         {
             RM_POINTS = 0,
@@ -69,6 +79,8 @@ namespace MynjenDook
             rendermode = RenderMode.RM_SOLID;
 
             set_displacement_amplitude(0.0f);
+
+            m_noiseMaker = new NoiseMaker(Water, gridsize_x, gridsize_y, maxProfile);
         }
 
         void set_displacement_amplitude(float amplitude)
