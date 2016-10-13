@@ -6,6 +6,11 @@ namespace MynjenDook
 {
     public class NoiseMaker
     {
+        public enum Macro
+        {
+            MAXNOISE = 6000,
+        }
+
         private MdWater m_water = null;
         public MdWater Water {
             get { return m_water; }
@@ -40,7 +45,7 @@ namespace MynjenDook
         };
         SOFTWARESURFACEVERTEX[] vertices;
 
-        Texture2D[][] packed_noise_texture;
+        Texture2D[][][] packed_noise_texture; // profile, t=2, level=8，其中level没用（对应原来d3d最大8层），t现在只用第0个
 
 
         public NoiseMaker(MdWater Water, int sX, int sY, int maxprofile)
@@ -66,6 +71,10 @@ namespace MynjenDook
             sizeX = sX;
             sizeY = sY;
             time = 0.0;
+
+            multitable = new int[(int)MdPredefinition.Macro.max_octaves];
+            f_multitable = new float[(int)MdPredefinition.Macro.max_octaves];
+
             last_time = (uint)Time.time * 1000;
             octaves = 0;    // don't want to have the noise accessed before it's calculated
 
@@ -89,6 +98,12 @@ namespace MynjenDook
 
             //load_effects();
             init_textures();
+        }
+
+        public void render_geometry()
+        {
+            calc_noise();
+            upload_noise();
         }
 
         void init_noise()
@@ -141,13 +156,13 @@ namespace MynjenDook
 
         void calc_noise()
         {
-            octaves = Math.Min(Water.oldparams.GetIValue(MdOldParams.pParameters.p_iOctaves), (int)MdPredefinition.Macro.max_octaves);
+            octaves = Math.Min(Water.oldparams.GetInt(MdOldParams.pParameters.p_iOctaves), (int)MdPredefinition.Macro.max_octaves);
 
             // calculate the strength of each octave
             float sum = 0.0f;
             for (int i = 0; i < octaves; i++)
             {
-                f_multitable[i] = (float)Math.Pow(Water.oldparams.GetFValue(MdOldParams.pParameters.p_fFalloff), 1.0f * i);
+                f_multitable[i] = (float)Math.Pow(Water.oldparams.GetFloat(MdOldParams.pParameters.p_fFalloff), 1.0f * i);
                 sum += f_multitable[i];
             }
 
@@ -170,9 +185,9 @@ namespace MynjenDook
             double itime = this_time - last_time;
             //static double lp_itime = 0.0;
             last_time = this_time;
-            itime *= 0.001 * Water.oldparams.GetFValue(MdOldParams.pParameters.p_fAnimspeed);
+            itime *= 0.001 * Water.oldparams.GetFloat(MdOldParams.pParameters.p_fAnimspeed);
             lp_itime = /*0.99*/0.01 * lp_itime + /*0.01*/0.99 * itime; // 缩短某个很卡的帧对以后帧的影响时间
-            if (!Water.oldparams.GetBValue(MdOldParams.pParameters.p_bPaused))
+            if (!Water.oldparams.GetBool(MdOldParams.pParameters.p_bPaused))
                 time += lp_itime;
 
 
@@ -201,7 +216,7 @@ namespace MynjenDook
                     }
                 }
 
-                r_timemulti *= Water.oldparams.GetFValue(MdOldParams.pParameters.p_fTimemulti);
+                r_timemulti *= Water.oldparams.GetFloat(MdOldParams.pParameters.p_fTimemulti);
             }
 
             if (MdPredefinition.Macro.packednoise != 0)
@@ -224,6 +239,68 @@ namespace MynjenDook
                         p_noise[v*np_size+u] = 1000;*/
                     // debug box
 
+                }
+            }
+        }
+
+        void upload_noise()
+        {
+            // 低配版不需要noise纹理
+            if (m_profile == 0)
+                return;
+
+            if ((int)MdPredefinition.Macro.water_cpu_normal == 1)
+            {
+                for (int i = 0; i < Water.predefinition.np_size_sq; i++)
+                {
+                    p_noise[m_profile][i] += p_noise[m_profile][i + Water.predefinition.np_size_sq]; // 将来对2张noise的合成算法有改动的话改这里
+                }
+            }
+            else
+            {
+                float[] fdata = new float[Water.predefinition.np_size_sq];
+                Color[] colourData = new Color[Water.predefinition.np_size_sq];
+                ushort[] data = new ushort[Water.predefinition.np_size_sq];
+
+                for (int t = 0; t < 2; t++)
+                {
+                    int offset = Water.predefinition.np_size_sq * t;
+                    // upload the first level
+
+                    float MAX = 0;
+                    for (int i = 0; i < Water.predefinition.np_size_sq; i++)
+                    {
+                        //data[i] = 32768+p_noise[m_profile][i+offset];
+                        float value = (float)(p_noise[m_profile][i + offset]);
+                        value = value / (float)Macro.MAXNOISE;                          // 经调试value最大5000+，所以除以6000，匹配[0, 1]颜色空间
+                        fdata[i] = value;
+                        //fdata[i] = 3.14f; // 
+                        colourData[i] = new Color(value, value, value, 1);
+
+                        if (t == 0)
+                        {
+                            if (MAX < value)
+                                MAX = value;
+                        }
+                    }
+                    Texture2D tex = packed_noise_texture[m_profile][t][0];
+                    tex.SetPixels(colourData);
+                    tex.Apply();
+
+                    // test: 绑纹理到plane、写tga文件
+                    if (Water.texviewRenderer != null && t == 0)
+                    {
+                        Water.texviewRenderer.sharedMaterial.mainTexture = tex;
+                        Debug.LogFormat("[upload noise] frame: {0}, time: {1}", Water.FrameCount, Time.time - Water.LastTime);
+
+                        string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\mdwater\noise0_{0}.tga", Water.FrameCount);
+                        tex.Save2Tga(fileName);
+                    }
+
+                    continue; // 只lock第一个level
+
+                    // 最大level：8 其他level不做了 todo.ksh
+                    //int c = 8; // packed_noise_texture[m_profile][t]->GetLevels();
                 }
             }
         }
@@ -268,16 +345,34 @@ namespace MynjenDook
 
             return; // kuangsihao
             */
-            packed_noise_texture = new Texture2D[3][];
+            packed_noise_texture = new Texture2D[3][][];
             for (int profile = 0; profile < 3; profile++)
             {
-                packed_noise_texture[profile] = new Texture2D[2];
+                int NP_SIZE = Water.predefinition.a_np_size[profile];
+                packed_noise_texture[profile] = new Texture2D[2][];
                 for (int i = 0; i < 2; i++)
                 {
-                    int NP_SIZE = Water.predefinition.a_np_size[i];
-                    packed_noise_texture[profile][i] = new Texture2D(NP_SIZE, NP_SIZE);
+                    packed_noise_texture[profile][i] = new Texture2D[8];
+                    for (int j = 0; j < 8; j++)
+                    {
+                        packed_noise_texture[profile][i][j] = new Texture2D(NP_SIZE, NP_SIZE);
+                    }
                 }
-            }            
+            }
+        }
+
+
+        [ContextMenu("Test")]
+        void Test()
+        {
+            // 把生成的noise存成文件查看
+            for (int i = 0; i < 2; ++i)
+            {
+                string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\noise{0}.tga", i);
+                Texture2D tex = packed_noise_texture[m_profile][i][0];
+                tex.Save2Tga(fileName);
+            }
+            Debug.Log("noise texture saved!");
         }
     }
 }

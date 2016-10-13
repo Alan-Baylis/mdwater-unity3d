@@ -16,6 +16,14 @@ namespace MynjenDook
         int m_maxProfile = 0;
         public GameObject[] SubNodes;
 
+
+        // Test:
+        private int m_framecount = 0;
+        public int FrameCount { get { return m_framecount; } }
+        private float m_lasttime = 0;
+        public float LastTime { get { return m_lasttime; } }
+        public Renderer texviewRenderer;
+
         void Awake()
         {
             Initialize();
@@ -39,6 +47,11 @@ namespace MynjenDook
 
         void Update()
         {
+            //Debug.LogErrorFormat("md update, frame: {0}  time: {1}", m_framecount, Time.time - m_lasttime);
+            surface.MdUpdate();
+
+            m_framecount++;
+            m_lasttime = Time.time;
         }
 
         public void Initialize()

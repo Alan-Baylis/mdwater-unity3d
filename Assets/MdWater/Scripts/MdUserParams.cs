@@ -11,6 +11,47 @@ namespace MynjenDook
     [RequireComponent(typeof(MdWater))]
     public class MdUserParams : MonoBehaviour
     {
+        public enum UserParams
+        {
+            WaterColorR = 0,
+            WaterColorG,
+            WaterColorB,
+            DeltaUV_X,
+            DeltaUV_Y,
+            DeltaUV_Z,
+            DeltaUV_W,
+            gw_fNormalUVScale0,
+            gw_fNormalUVScale1,
+            gw_fNormalRatio,
+            gw_fNormalNoise,
+            gw_fNoNoiseScreen,
+            gw_fRefractRadius,
+            gw_fRefractMinAlpha,
+            gw_fFresnelBias,
+            gw_fFresnelScale,
+            gw_fFresnelPower,
+            gw_fCausticsUVScale,
+            gw_fCausticsDepth,
+            CausticsSpeed,
+            gw_fWaveVertexSpacing,
+            gw_fWaveRatio,
+            WaveHeightDiv,
+            ClipHeight,
+            SunColorR,
+            SunColorG,
+            SunColorB,
+            gw_fSunFactor,
+            gw_fSunPower,
+            SunFaceTo,
+            SunHeight,
+            gw_fNoiseUVScale,
+            gw_fNoiseWaveHeightDiv,
+            gw_fSunNormalSpacing,
+            gw_fSunNormalRatio,
+
+            numParameters
+        };
+
         [Serializable]
         public struct Param
         {
@@ -24,7 +65,7 @@ namespace MynjenDook
                 m_Shader = shader;
             }
         }
-        public List<Param> Params = new List<Param>();
+        public Param[] Params;
 
         void Awake()
         {
@@ -47,44 +88,57 @@ namespace MynjenDook
 
         private void InitWaterParams()
         {
-            if (Params.Count > 0) return;
-            Params.Add(new Param("WaterColorR", 0.12f, false));
-            Params.Add(new Param("WaterColorG", 0.22f, false));
-            Params.Add(new Param("WaterColorB", 0.29f, false));
-            Params.Add(new Param("DeltaUV_X", 0.01f, false));
-            Params.Add(new Param("DeltaUV_Y", 0.03f, false));
-            Params.Add(new Param("DeltaUV_Z", -0.005f, false));
-            Params.Add(new Param("DeltaUV_W", 0.015f, false));
-            Params.Add(new Param("gw_fNormalUVScale0", 15.0f, true)); // 整数就可以了
-            Params.Add(new Param("gw_fNormalUVScale1", 15.0f, true)); // 整数就可以了
-            Params.Add(new Param("gw_fNormalRatio", 0.5f, true));
-            Params.Add(new Param("gw_fNormalNoise", 0.05f, true));
-            Params.Add(new Param("gw_fNoNoiseScreen", 0.03f, true));
-            Params.Add(new Param("gw_fRefractRadius", 5000f, true));
-            Params.Add(new Param("gw_fRefractMinAlpha", 0.82f, true));
-            Params.Add(new Param("gw_fFresnelBias", 0.60f, true));
-            Params.Add(new Param("gw_fFresnelScale", 1.35f, true)); // 1.8
-            Params.Add(new Param("gw_fFresnelPower", 1.218f, true)); // 1.31
-            Params.Add(new Param("gw_fCausticsUVScale", 30.0f, true));
-            Params.Add(new Param("gw_fCausticsDepth", 270.0f, true));
-            Params.Add(new Param("CausticsSpeed", 0.6f, false));
-            Params.Add(new Param("gw_fWaveVertexSpacing", 12.0f, true)); // 27
-            Params.Add(new Param("gw_fWaveRatio", 0.28f, true)); // 5
-            Params.Add(new Param("WaveHeightDiv", 55.0f, false));
-            Params.Add(new Param("ClipHeight", 80.0f, false));
-            Params.Add(new Param("SunColorR", 1.2f, false));
-            Params.Add(new Param("SunColorG", 0.4f, false));
-            Params.Add(new Param("SunColorB", 0.1f, false));
-            Params.Add(new Param("gw_fSunFactor", 1.5f, true));
-            Params.Add(new Param("gw_fSunPower", 220.0f, true));
-            Params.Add(new Param("SunFaceTo", 90.0f, false));
-            Params.Add(new Param("SunHeight", 8.3f, false));
-            Params.Add(new Param("gw_fNoiseUVScale", 128f, true));
-            Params.Add(new Param("gw_fNoiseWaveHeightDiv", 60f, true));
-            Params.Add(new Param("gw_fSunNormalSpacing", 0.007f, true));
-            Params.Add(new Param("gw_fSunNormalRatio", 0.86f, true));
+            if (Params != null && Params.Length > 0) return;
+
+            Params = new Param[(int)UserParams.numParameters];
+
+            Params[(int)UserParams.WaterColorR]            = new Param(UserParams.WaterColorR.ToString()           , 0.12f,   false);
+            Params[(int)UserParams.WaterColorG]            = new Param(UserParams.WaterColorG.ToString()           , 0.22f,   false);
+            Params[(int)UserParams.WaterColorB]            = new Param(UserParams.WaterColorB.ToString()           , 0.29f,   false);
+            Params[(int)UserParams.DeltaUV_X]              = new Param(UserParams.DeltaUV_X.ToString()             , 0.01f,   false);
+            Params[(int)UserParams.DeltaUV_Y]              = new Param(UserParams.DeltaUV_Y.ToString()             , 0.03f,   false);
+            Params[(int)UserParams.DeltaUV_Z]              = new Param(UserParams.DeltaUV_Z.ToString()             , -0.005f, false);
+            Params[(int)UserParams.DeltaUV_W]              = new Param(UserParams.DeltaUV_W.ToString()             , 0.015f,  false);
+            Params[(int)UserParams.gw_fNormalUVScale0]     = new Param(UserParams.gw_fNormalUVScale0.ToString()    , 15.0f,   true); // 整数就可以了
+            Params[(int)UserParams.gw_fNormalUVScale1]     = new Param(UserParams.gw_fNormalUVScale1.ToString()    , 15.0f,   true); // 整数就可以了
+            Params[(int)UserParams.gw_fNormalRatio]        = new Param(UserParams.gw_fNormalRatio.ToString()       , 0.5f,    true);
+            Params[(int)UserParams.gw_fNormalNoise]        = new Param(UserParams.gw_fNormalNoise.ToString()       , 0.05f,   true);
+            Params[(int)UserParams.gw_fNoNoiseScreen]      = new Param(UserParams.gw_fNoNoiseScreen.ToString()     , 0.03f,   true);
+            Params[(int)UserParams.gw_fRefractRadius]      = new Param(UserParams.gw_fRefractRadius.ToString()     , 5000f,   true);
+            Params[(int)UserParams.gw_fRefractMinAlpha]    = new Param(UserParams.gw_fRefractMinAlpha.ToString()   , 0.82f,   true);
+            Params[(int)UserParams.gw_fFresnelBias]        = new Param(UserParams.gw_fFresnelBias.ToString()       , 0.60f,   true);
+            Params[(int)UserParams.gw_fFresnelScale]       = new Param(UserParams.gw_fFresnelScale.ToString()      , 1.35f,   true); // 1.8
+            Params[(int)UserParams.gw_fFresnelPower]       = new Param(UserParams.gw_fFresnelPower.ToString()      , 1.218f,  true); // 1.31
+            Params[(int)UserParams.gw_fCausticsUVScale]    = new Param(UserParams.gw_fCausticsUVScale.ToString()   , 30.0f,   true);
+            Params[(int)UserParams.gw_fCausticsDepth]      = new Param(UserParams.gw_fCausticsDepth.ToString()     , 270.0f,  true);
+            Params[(int)UserParams.CausticsSpeed]          = new Param(UserParams.CausticsSpeed.ToString()         , 0.6f,    false);
+            Params[(int)UserParams.gw_fWaveVertexSpacing]  = new Param(UserParams.gw_fWaveVertexSpacing.ToString() , 12.0f,   true); // 27
+            Params[(int)UserParams.gw_fWaveRatio]          = new Param(UserParams.gw_fWaveRatio.ToString()         , 0.28f,   true); // 5
+            Params[(int)UserParams.WaveHeightDiv]          = new Param(UserParams.WaveHeightDiv.ToString()         , 55.0f,   false);
+            Params[(int)UserParams.ClipHeight]             = new Param(UserParams.ClipHeight.ToString()            , 80.0f,   false);
+            Params[(int)UserParams.SunColorR]              = new Param(UserParams.SunColorR.ToString()             , 1.2f,    false);
+            Params[(int)UserParams.SunColorG]              = new Param(UserParams.SunColorG.ToString()             , 0.4f,    false);
+            Params[(int)UserParams.SunColorB]              = new Param(UserParams.SunColorB.ToString()             , 0.1f,    false);
+            Params[(int)UserParams.gw_fSunFactor]          = new Param(UserParams.gw_fSunFactor.ToString()         , 1.5f,    true);
+            Params[(int)UserParams.gw_fSunPower]           = new Param(UserParams.gw_fSunPower.ToString()          , 220.0f,  true);
+            Params[(int)UserParams.SunFaceTo]              = new Param(UserParams.SunFaceTo.ToString()             , 90.0f,   false);
+            Params[(int)UserParams.SunHeight]              = new Param(UserParams.SunHeight.ToString()             , 8.3f,    false);
+            Params[(int)UserParams.gw_fNoiseUVScale]       = new Param(UserParams.gw_fNoiseUVScale.ToString()      , 128f,    true);
+            Params[(int)UserParams.gw_fNoiseWaveHeightDiv] = new Param(UserParams.gw_fNoiseWaveHeightDiv.ToString(), 60f,     true);
+            Params[(int)UserParams.gw_fSunNormalSpacing]   = new Param(UserParams.gw_fSunNormalSpacing.ToString()  , 0.007f,  true);
+            Params[(int)UserParams.gw_fSunNormalRatio]     = new Param(UserParams.gw_fSunNormalRatio.ToString()    , 0.86f,   true);
+        }
+
+        public float GetFloat(UserParams p)
+        {
+            return Params[(int)p].m_Value;
         }
 
 
+        [ContextMenu("Test")]
+        void Test()
+        {
+            InitWaterParams();
+        }
     }
 }

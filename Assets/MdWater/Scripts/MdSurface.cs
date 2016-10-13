@@ -35,20 +35,20 @@ namespace MynjenDook
 
         void Awake()
         {
-
         }
-
         void Start()
         {
         }
-
         void OnDestroy()
         {
-
         }
-
         void Update()
         {
+        }
+
+        public void MdUpdate()
+        {
+            m_noiseMaker.render_geometry();
         }
 
         public void Initialize(Vector3 inpos, Vector3 n, int size_x, int size_y, int maxProfile)
