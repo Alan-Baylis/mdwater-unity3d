@@ -21,6 +21,7 @@
 			sampler2D _MainTex;
 			sampler2D _VertTex;
 			sampler2D _ReflectionTex;
+			float4 _MainTex_ST;
 			
 			struct v2f
 			{
