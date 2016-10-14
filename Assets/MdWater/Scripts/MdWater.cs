@@ -16,6 +16,8 @@ namespace MynjenDook
         int m_maxProfile = 0;
         public GameObject[] SubNodes;
 
+        public Material material = null;
+
 
         // Test:
         private int m_framecount = 0;
@@ -73,6 +75,14 @@ namespace MynjenDook
 
 
             BuildWaterMeshes();
+            FindMaterial();
+        }
+
+        private void FindMaterial()
+        {
+            int profile = GetProfile();
+            MeshRenderer r = SubNodes[profile].GetComponent<MeshRenderer>();
+            this.material = r.material;
         }
 
         private void BuildWaterMeshes()
@@ -120,7 +130,7 @@ namespace MynjenDook
         {
             MeshFilter meshFilter = SubNodes[profile].GetComponent<MeshFilter>();
             meshFilter.mesh.Clear();
-            Mesh newMesh = MMMeshCreator.CreateMesh(profile);
+            Mesh newMesh = MMMeshCreator.CreateMesh(profile, predefinition.a_np_size[profile]);
             meshFilter.mesh = newMesh;
 
             MdReflection reflection = SubNodes[profile].GetComponent<MdReflection>();
