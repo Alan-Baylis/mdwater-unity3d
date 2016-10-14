@@ -51,5 +51,98 @@ namespace MynjenDook
             bw.Close();
             fsw.Close();
         }
+
+        static public void SaveFloatArray2Tga(float[] array, int width, int height, string fileName)
+        {
+            // 写一个16bit的tga文件
+            FileStream fsw = new FileStream(fileName, FileMode.Create);
+            BinaryWriter bw = new BinaryWriter(fsw);
+            // tga头文件
+            byte bHeader = 0;
+            ushort wHeader = 0;
+            bw.Write(bHeader);
+            bw.Write(bHeader);
+            bHeader = 2;                    // 这里要改成2才能explorer.exe正确预览
+            bw.Write(bHeader);
+            bw.Write(wHeader);
+            bw.Write(wHeader);
+            bHeader = 0;
+            bw.Write(bHeader);
+            bw.Write(wHeader);
+            bw.Write(wHeader);
+            wHeader = (ushort)width;        // 图片宽
+            bw.Write(wHeader);
+            wHeader = (ushort)height;       // 图片高
+            bw.Write(wHeader);
+            bHeader = 32;                   // 深度(每图素4个字节)
+            bw.Write(bHeader);
+            bHeader = 32;                   // Flip vertically
+            bw.Write(bHeader);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    float fColor = array[y * width + x];
+                    if (fColor < 0 || fColor > 1)
+                    {
+                        int iii = 0;
+                    }
+                    byte bValue = (byte)(fColor * 255.0f);
+                    byte a = 255;
+                    byte b = bValue;
+                    byte g = bValue;
+                    byte r = bValue;
+                    uint cc = ((uint)b) + (((uint)g) << 8) + (((uint)r) << 16) + (((uint)a) << 24);
+                    bw.Write(cc);
+                }
+            }
+            bw.Close();
+            fsw.Close();
+        }
+
+        static public void SaveColorArray2Tga(Color[] colors, int width, int height, string fileName)
+        {
+            // 写一个16bit的tga文件
+            FileStream fsw = new FileStream(fileName, FileMode.Create);
+            BinaryWriter bw = new BinaryWriter(fsw);
+            // tga头文件
+            byte bHeader = 0;
+            ushort wHeader = 0;
+            bw.Write(bHeader);
+            bw.Write(bHeader);
+            bHeader = 2;                    // 这里要改成2才能explorer.exe正确预览
+            bw.Write(bHeader);
+            bw.Write(wHeader);
+            bw.Write(wHeader);
+            bHeader = 0;
+            bw.Write(bHeader);
+            bw.Write(wHeader);
+            bw.Write(wHeader);
+            wHeader = (UInt16)width;        // 图片宽
+            bw.Write(wHeader);
+            wHeader = (UInt16)height;       // 图片高
+            bw.Write(wHeader);
+            bHeader = 32;                   // 深度(每图素4个字节)
+            bw.Write(bHeader);
+            bHeader = 32;                   // Flip vertically
+            bw.Write(bHeader);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Color color = colors[y * width + x];
+                    byte a = (byte)(color.a * 255f);
+                    byte b = (byte)(color.b * 255f);
+                    byte g = (byte)(color.g * 255f);
+                    byte r = (byte)(color.r * 255f);
+                    uint cc = ((uint)b) + (((uint)g) << 8) + (((uint)r) << 16) + (((uint)a) << 24);
+                    bw.Write(cc);
+                }
+            }
+            bw.Close();
+            fsw.Close();
+        }
     }
 }

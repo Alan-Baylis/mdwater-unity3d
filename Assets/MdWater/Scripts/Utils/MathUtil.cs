@@ -8,8 +8,15 @@ namespace MynjenDook
     {
         static public double modf(double x, out double integer)
         {
-            integer = Math.Round(x);
-            return x - integer;
+            integer = Math.Floor(x);
+            double fraction = x - integer;
+
+            #if DEBUG
+            if (fraction < 0)
+                fraction = 0; // 小数部分
+            #endif
+
+            return fraction;
         }
     }
 }

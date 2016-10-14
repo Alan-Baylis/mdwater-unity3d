@@ -71,6 +71,7 @@ namespace MynjenDook
             sizeX = sX;
             sizeY = sY;
             time = 0.0;
+            lp_itime = 0.0;
 
             multitable = new int[(int)MdPredefinition.Macro.max_octaves];
             f_multitable = new float[(int)MdPredefinition.Macro.max_octaves];
@@ -165,23 +166,17 @@ namespace MynjenDook
                 f_multitable[i] = (float)Math.Pow(Water.oldparams.GetFloat(MdOldParams.pParameters.p_fFalloff), 1.0f * i);
                 sum += f_multitable[i];
             }
-
+            for (int i = 0; i < octaves; i++)
             {
-                for (int i = 0; i < octaves; i++)
-                {
-                    f_multitable[i] /= sum;
-                }
+                f_multitable[i] /= sum;
             }
-
+            for (int i = 0; i < octaves; i++)
             {
-                for (int i = 0; i < octaves; i++)
-                {
-                    multitable[i] = (int)((int)MdPredefinition.Macro.scale_magnitude * f_multitable[i]);
-                }
+                multitable[i] = (int)((int)MdPredefinition.Macro.scale_magnitude * f_multitable[i]);
             }
 
 
-            uint this_time = (uint)Time.time * 1000;;
+            uint this_time = (uint)(Time.time * 1000);
             double itime = this_time - last_time;
             //static double lp_itime = 0.0;
             last_time = this_time;
@@ -262,43 +257,60 @@ namespace MynjenDook
                 Color[] colourData = new Color[Water.predefinition.np_size_sq];
                 ushort[] data = new ushort[Water.predefinition.np_size_sq];
 
+                float MacroMax = (float)Macro.MAXNOISE;
+                float MAX = 0, MIN = 1000000f;
                 for (int t = 0; t < 2; t++)
                 {
                     int offset = Water.predefinition.np_size_sq * t;
                     // upload the first level
 
-                    float MAX = 0;
                     for (int i = 0; i < Water.predefinition.np_size_sq; i++)
                     {
                         //data[i] = 32768+p_noise[m_profile][i+offset];
                         float value = (float)(p_noise[m_profile][i + offset]);
-                        value = value / (float)Macro.MAXNOISE;                          // 经调试value最大5000+，所以除以6000，匹配[0, 1]颜色空间
+
+                        #if DEBUG
+                        if (Math.Abs(value) > MacroMax)
+                            Debug.LogErrorFormat("water p_noise exceeds MAXNOISE: t:{0} i:{1} value:{2} MAX:{3}", t, i, value, MacroMax);
+                        #endif
+
+                        value = (value - (-MacroMax)) / (MacroMax * 2f); // 经调试value最大5000+，所以除以6000，匹配[0, 1]颜色空间
+
                         fdata[i] = value;
                         //fdata[i] = 3.14f; // 
                         colourData[i] = new Color(value, value, value, 1);
 
                         if (t == 0)
                         {
-                            if (MAX < value)
-                                MAX = value;
+                            MAX = Math.Max(MAX, value);
+                            MIN = Math.Min(MIN, value);
                         }
                     }
+                    if (t == 0 && false) // todo.ksh: 测试代码
+                    {
+                        int NP_SIZE = Water.predefinition.a_np_size[m_profile];
+                        string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\mdwater\noise0_{0}.tga", Water.FrameCount);
+                        //Texture2DExtension.SaveColorArray2Tga(colourData, NP_SIZE, NP_SIZE, fileName);
+                        Texture2DExtension.SaveFloatArray2Tga(fdata, NP_SIZE, NP_SIZE, fileName);
+                    }
+
                     Texture2D tex = packed_noise_texture[m_profile][t][0];
                     tex.SetPixels(colourData);
                     tex.Apply();
 
                     // test: 绑纹理到plane、写tga文件
-                    if (Water.texviewRenderer != null && t == 0)
+                    if (t == 0)
                     {
-                        Water.texviewRenderer.sharedMaterial.mainTexture = tex;
-                        Debug.LogFormat("[upload noise] frame: {0}, time: {1}", Water.FrameCount, Time.time - Water.LastTime);
-
-                        string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\mdwater\noise0_{0}.tga", Water.FrameCount);
-                        tex.Save2Tga(fileName);
+                        if (Water.texviewRenderer != null)
+                        {
+                            Water.texviewRenderer.sharedMaterial.mainTexture = tex;
+                            //Debug.LogFormat("[upload noise] frame: {0}, time: {1}", Water.FrameCount, Time.time - Water.LastTime);
+                            //string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\mdwater\noise0_{0}.tga", Water.FrameCount);
+                            //tex.Save2Tga(fileName);
+                        }
                     }
 
                     continue; // 只lock第一个level
-
                     // 最大level：8 其他level不做了 todo.ksh
                     //int c = 8; // packed_noise_texture[m_profile][t]->GetLevels();
                 }
