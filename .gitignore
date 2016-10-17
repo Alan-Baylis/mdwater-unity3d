@@ -30,3 +30,4 @@ sysinfo.txt
 *.unitypackage
 /Assets/ConsoleE/Editor/ConsoleE_TabSettings
 /Assets/ConsoleE/Editor/ConsoleE_TabSettings.meta
+/.vs

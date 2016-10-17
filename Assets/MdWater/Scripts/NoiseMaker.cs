@@ -8,7 +8,7 @@ namespace MynjenDook
     {
         public enum Macro
         {
-            MAXNOISE = 8000,
+            MAXNOISE = 10000,
         }
 
         private MdWater m_water = null;

@@ -3,8 +3,8 @@
 	Properties
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_VertTex ("Vertex Modify", 2D) = "black" {}
-		[HideInInspector] _ReflectionTex ("", 2D) = "white" {}
+		[HideInInspector] _ReflectionTex("", 2D) = "white" {}
+		[HideInInspector] _VertTex ("Vertex Modify", 2D) = "" {}
 	}
 	SubShader
 	{
@@ -35,9 +35,9 @@
 				v2f o;
 				o.uv = TRANSFORM_TEX(uv, _MainTex);
 				float4 tex = tex2Dlod(_VertTex, float4(o.uv, 0, 0));
-				pos.y += tex.r;
+				pos.y += tex.r - 0.5;
 				o.pos = mul (UNITY_MATRIX_MVP, pos);
-				o.refl = ComputeScreenPos (o.pos);
+				o.refl = ComputeScreenPos(o.pos);
 				return o;
 			}
 
