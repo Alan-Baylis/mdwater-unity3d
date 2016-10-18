@@ -9,6 +9,12 @@ namespace MynjenDook
     [RequireComponent(typeof(MdWater))]
     public class MdPredefinition : MonoBehaviour
     {
+        static public MdPredefinition Instance = null;
+        public MdPredefinition()
+        {
+            Instance = this;
+        }
+
         public enum Macro
         {
             // 下面3个用作bool值（来自SoftwareNoiseMaker）
@@ -138,7 +144,8 @@ namespace MynjenDook
         private void SetupPredefinitions()
         {
             int[] BITS = { 2, 4, 5 }; // 5最好
-            float[] WATERL = { 40000f, 10000f, 10000f }; // 低配由于只有ring0，所以ring0的边长要非常大
+            float[] WATERL = { 400f, 100f, 100f }; // 低配由于只有ring0，所以ring0的边长要非常大 注意单位是米
+
             for (int i = 0; i < 3; i++)
             {
                 a_n_bits[i] = BITS[i];

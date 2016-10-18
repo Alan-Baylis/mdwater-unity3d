@@ -1,4 +1,4 @@
-﻿Shader "MMWater/MMWater"
+﻿Shader "MdWater/MdWater"
 {
 	Properties
 	{

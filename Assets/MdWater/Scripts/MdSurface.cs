@@ -51,8 +51,11 @@ namespace MynjenDook
             m_noiseMaker.render_geometry();
         }
 
-        public void Initialize(Vector3 inpos, Vector3 n, int size_x, int size_y, int maxProfile)
+        public void Initialize(Vector3 inpos, Vector3 n, int maxProfile)
         {
+            int size_x = (int)MdPredefinition.Macro.gridsize_x;
+            int size_y = (int)MdPredefinition.Macro.gridsize_y;
+
             plane = new Plane(n, inpos);
             normal = n.normalized;
 

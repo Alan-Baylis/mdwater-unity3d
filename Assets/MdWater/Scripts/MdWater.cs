@@ -14,7 +14,7 @@ namespace MynjenDook
         public MdSurface surface = null;
 
         int m_maxProfile = 0;
-        public GameObject[] SubNodes;
+        public GameObject[] ProfileNodes;
 
         public Material material = null;
 
@@ -65,38 +65,30 @@ namespace MynjenDook
             surface = GetComponent<MdSurface>();
             //reflection组件搬到submesh上
 
-
             predefinition.Initialize();
             oldparams.Initialize();
             userparams.Initialize();
             texturing.Initialize();
             m_maxProfile = CheckHardware();
-            surface.Initialize(Vector3.zero, Vector3.up, (int)MdPredefinition.Macro.gridsize_x, (int)MdPredefinition.Macro.gridsize_y, m_maxProfile);
-
+            surface.Initialize(Vector3.zero, Vector3.up, m_maxProfile);
 
             BuildWaterMeshes();
-            FindMaterial();
-        }
-
-        private void FindMaterial()
-        {
-            int profile = GetProfile();
-            MeshRenderer r = SubNodes[profile].GetComponent<MeshRenderer>();
-            this.material = r.material;
         }
 
         private void BuildWaterMeshes()
         {
-            SubNodes = new GameObject[m_maxProfile + 1];
+            MMMeshCreator.Water = this;
+
+            ProfileNodes = new GameObject[m_maxProfile + 1];
             for (int i = 0; i < 3; i++)
             {
-                SubNodes[i] = transform.FindChild("sub" + i).gameObject;
+                ProfileNodes[i] = transform.FindChild("profile" + i).gameObject;
             }
 
-            for (int i = 0; i <= m_maxProfile; i++)
+            for (int profile = 0; profile <= m_maxProfile; profile++)
             {
-                SetProfile(i);
-                CreateLodMesh(i);
+                SetProfile(profile);
+                MMMeshCreator.CreateLodMesh(profile, ref ProfileNodes[profile]);
             }
             SetProfile(m_maxProfile);
 
@@ -126,17 +118,6 @@ namespace MynjenDook
             return 2; // todo.ksh: 
         }
 
-        private void CreateLodMesh(int profile)
-        {
-            MeshFilter meshFilter = SubNodes[profile].GetComponent<MeshFilter>();
-            meshFilter.mesh.Clear();
-            Mesh newMesh = MMMeshCreator.CreateMesh(profile, predefinition.a_np_size[profile]);
-            meshFilter.mesh = newMesh;
-
-            MdReflection reflection = SubNodes[profile].GetComponent<MdReflection>();
-            reflection.Initialize();
-        }
-
         private void SetProfile(int profile)
         {
 	        if (profile > m_maxProfile)
@@ -146,7 +127,7 @@ namespace MynjenDook
             predefinition.UpdatePredefinitions(profile);
 	        for (int i = 0; i< 3; i++)
 	        {
-                SubNodes[i].SetActive(i == profile);
+                ProfileNodes[i].SetActive(i == profile);
             }
 
             //GetWater()->Update(0); // todo:kuangsihao

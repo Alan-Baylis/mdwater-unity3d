@@ -110,8 +110,7 @@ namespace MynjenDook
             Material[] materials = rend.sharedMaterials;
             foreach (Material mat in materials)
             {
-                if (mat.HasProperty("_ReflectionTex"))
-                    mat.SetTexture("_ReflectionTex", m_ReflectionTexture);
+                if (mat.HasProperty("_ReflectionTex")) mat.SetTexture("_ReflectionTex", m_ReflectionTexture);
             }
 
             // Restore pixel light count
