@@ -110,7 +110,7 @@ namespace MynjenDook
                     Mesh pkMesh = _CreateRectangleMesh(0, i, j, (uint)def.waterlv0, kMin, kMax, kMinUV, kMaxUV);
 
                     uiTotalVerts += (uint)pkMesh.vertexCount;
-                    uiTotalTris += (uint)pkMesh.triangles.Length;
+                    uiTotalTris += (uint)pkMesh.triangles.Length / 3;
                     GameObject goMesh = AfterCreateMesh(profile, pkMesh, 0, i, j);
                     goMesh.transform.parent = ProfileNode.transform;
                 }
@@ -136,7 +136,7 @@ namespace MynjenDook
                         Vector2 kMaxUV = new Vector2(i * 2 + 4, j * 2 + 4);
                         Mesh pkMesh = _CreateRectangleMesh(1, i, j, (uint)def.waterlv1, kMin, kMax, kMinUV, kMaxUV);
                         uiTotalVerts += (uint)pkMesh.vertexCount;
-                        uiTotalTris += (uint)pkMesh.triangles.Length;
+                        uiTotalTris += (uint)pkMesh.triangles.Length / 3;
                         GameObject goMesh = AfterCreateMesh(profile, pkMesh, 1, i, j);
                         goMesh.transform.parent = ProfileNode.transform;
                     }
@@ -160,7 +160,7 @@ namespace MynjenDook
 
                         Mesh pkMesh = _CreateRectangleMesh(2, i, j, (uint)def.waterlv2, kMin, kMax, kMinUV, kMaxUV);
                         uiTotalVerts += (uint)pkMesh.vertexCount;
-                        uiTotalTris += (uint)pkMesh.triangles.Length;
+                        uiTotalTris += (uint)pkMesh.triangles.Length / 3;
 
                         GameObject goMesh = AfterCreateMesh(profile, pkMesh, 2, i, j);
                         goMesh.transform.parent = ProfileNode.transform;
