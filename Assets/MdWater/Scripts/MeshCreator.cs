@@ -108,14 +108,71 @@ namespace MynjenDook
                     Vector2 kMinUV = new Vector3(i + 4, j + 4);
                     Vector2 kMaxUV = new Vector3(i + 5, j + 5);
                     Mesh pkMesh = _CreateRectangleMesh(0, i, j, (uint)def.waterlv0, kMin, kMax, kMinUV, kMaxUV);
-                    //Mesh pkMesh = CreateTestMesh(profile);
 
                     uiTotalVerts += (uint)pkMesh.vertexCount;
                     uiTotalTris += (uint)pkMesh.triangles.Length;
-                    AfterCreateMesh(profile, ProfileNode, pkMesh, 0, i, j);
-                    //pkParent->AttachChild(pkMesh);
+                    GameObject goMesh = AfterCreateMesh(profile, pkMesh, 0, i, j);
+                    goMesh.transform.parent = ProfileNode.transform;
                 }
             }
+
+            // 最低配水块边长比较大，所以需要ring0
+            if (profile != 0)
+            {
+                // 再处理8个ring1
+                for (int j = 0; j < 3; j++)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (i == 1 && j == 1) // 中间的不用
+                            continue;
+
+                        float fRing1Radius = def.waterl1 / 2f;
+                        float fStartX = (i - 1) * def.waterl1;
+                        float fStartY = (j - 1) * def.waterl1;
+                        Vector3 kMin = new Vector3(fStartX - fRing1Radius, 0, fStartY - fRing1Radius);
+                        Vector3 kMax = new Vector3(fStartX + fRing1Radius, 0, fStartY + fRing1Radius);
+                        Vector2 kMinUV = new Vector2(i * 2 + 2, j * 2 + 2);
+                        Vector2 kMaxUV = new Vector2(i * 2 + 4, j * 2 + 4);
+                        Mesh pkMesh = _CreateRectangleMesh(1, i, j, (uint)def.waterlv1, kMin, kMax, kMinUV, kMaxUV);
+                        uiTotalVerts += (uint)pkMesh.vertexCount;
+                        uiTotalTris += (uint)pkMesh.triangles.Length;
+                        GameObject goMesh = AfterCreateMesh(profile, pkMesh, 1, i, j);
+                        goMesh.transform.parent = ProfileNode.transform;
+                    }
+                }
+
+		        // 再处理16个ring2
+		        for (int j = 0; j< 5; j++)
+		        {
+			        for (int i = 0; i< 5; i++)
+			        {
+				        if (i >= 1 && i <= 3 && j >= 1 && j <= 3) // 中间的不用
+					        continue;
+
+				        float fRing2Radius = def.waterl2 / 2f;
+                        float fStartX = (i - 2) * def.waterl2;
+                        float fStartY = (j - 2) * def.waterl2;
+                        Vector3 kMin = new Vector3(fStartX - fRing2Radius, 0, fStartY - fRing2Radius);
+                        Vector3 kMax = new Vector3(fStartX + fRing2Radius, 0, fStartY + fRing2Radius);
+                        Vector2 kMinUV = new Vector2(i* 2, j* 2);
+                        Vector2 kMaxUV = new Vector2(i* 2 + 2, j* 2 + 2);
+
+                        Mesh pkMesh = _CreateRectangleMesh(2, i, j, (uint)def.waterlv2, kMin, kMax, kMinUV, kMaxUV);
+                        uiTotalVerts += (uint)pkMesh.vertexCount;
+                        uiTotalTris += (uint)pkMesh.triangles.Length;
+
+                        GameObject goMesh = AfterCreateMesh(profile, pkMesh, 2, i, j);
+                        goMesh.transform.parent = ProfileNode.transform;
+                    }
+                }
+	        }
+            Debug.LogWarningFormat("水顶点数：{0}, 面数：{1}", uiTotalVerts, uiTotalTris);
+
+            // update
+            //pkParent->UpdateProperties();
+            //pkParent->UpdateEffects();
+            //pkParent->Update(0);
         }
 
 
@@ -734,8 +791,19 @@ namespace MynjenDook
             kIndicesIter[uiIndex++] = (MdPredefinition.Macro.waterccw != 0) ? (ushort)uiIndices[4] : (ushort)uiIndices[5];
         }
 
-        static private void AfterCreateMesh(int profile, GameObject ProfileNode, Mesh pkMesh, int ring, int i, int j)
+        static private GameObject AfterCreateMesh(int profile, Mesh pkMesh, int ring, int i, int j)
         {
+            //// Set the bound
+            // sm3.0不需要modifier
+            if (profile == 0) // 
+            {
+            }
+            //// vertex color property
+            //// material property
+            // texturing property
+            // update
+
+
             string name = string.Format("mesh_{0}_{1}_{2}_{3}", profile, ring, i, j);
             GameObject SubMesh = new GameObject(name);
 
@@ -750,22 +818,7 @@ namespace MynjenDook
 
             BoxCollider bc = SubMesh.AddComponent<BoxCollider>();
 
-            SubMesh.transform.parent = ProfileNode.transform;
-
-            //// Set the bound
-
-            // sm3.0不需要modifier
-            if (profile == 0) // 
-            {
-            }
-
-            //// vertex color property
-
-            //// material property
-
-            // texturing property
-
-            // update
+            return SubMesh;
         }
 
         static private void CalcVertNoiseUV(ref float x, ref float y, ref int vx, ref int vy) // x、y是顶点位置，vx、vy代表noise的uv
