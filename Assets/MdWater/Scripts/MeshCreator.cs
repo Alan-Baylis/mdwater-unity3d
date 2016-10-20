@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define SIMPLE_POLY
+
+using UnityEngine;
 using System.Collections;
 
 #pragma warning disable 0429 // disable warning CS0429 : Unreachable expression code detected
@@ -19,10 +21,11 @@ namespace MynjenDook
 
         static public Mesh CreateTestMesh(int profile)
         {
-            float width = 100;
-            float height = 100;
+            float width = 2;
+            float height = 2;
 
             int verts = MdPredefinition.Instance.a_np_size[profile];
+            verts = 2;
 
             Mesh mesh = new Mesh();
             mesh.name = "WaterMesh";
@@ -80,6 +83,13 @@ namespace MynjenDook
 
         static public void CreateLodMesh(int profile, ref GameObject ProfileNode)
         {
+#if SIMPLE_POLY
+            Mesh m = CreateTestMesh(profile);
+            GameObject o = AfterCreateMesh(profile, m, 0, 0, 0);
+            o.transform.parent = ProfileNode.transform;
+            return;
+#endif
+
             MdPredefinition def = MdPredefinition.Instance;
 
             // uv示意图（ring0和ring1）

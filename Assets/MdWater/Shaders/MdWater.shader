@@ -2,6 +2,9 @@
 {
 	Properties
 	{
+		// 注意float最大默认值为999999
+		// 标注 * 的是修改过单位，从厘米 -> 米
+
 		_MainTex                        ("Base (RGB)"                , 2D)        = "white" {}
 		[HideInInspector] _ReflectionTex(""                          , 2D)        = "white" {}
 		[HideInInspector] _VertTex      ("Vertex Modify"             , 2D)        = "" {}
@@ -34,8 +37,8 @@
 		// caustics
 		gw_fCausticsUVScale             ("gw_fCausticsUVScale"       , float)     = 20				    // 刻蚀图uv密度
 		gw_fCausticsDepth               ("gw_fCausticsDepth"         , float)     = 260					// 多深的水才没有刻蚀图
-		gw_fWorldSideLengthX            ("gw_fWorldSideLengthX"      , float)     = 1843200		        // 整个大世界的宽
-		gw_fWorldSideLengthY            ("gw_fWorldSideLengthY"      , float)     = 1843200		        // 整个大世界的高
+		gw_fWorldSideLengthX            ("gw_fWorldSideLengthX"      , float)     = 18432		        //  *  整个大世界的宽
+		gw_fWorldSideLengthY            ("gw_fWorldSideLengthY"      , float)     = 18432		        //  *  整个大世界的高
 		gw_fCaustics                    ("gw_fCaustics"              , float)     = 1					// 如果是0.0f（通常是因为heightmap初始化失败了），就没有刻蚀图
 
 		// sun
@@ -72,6 +75,7 @@
  
 		Pass {
 			CGPROGRAM
+			#pragma enable_d3d11_debug_symbols // 调试用
 			#pragma target 3.0 // VTF
 			#pragma vertex vert
 			#pragma fragment frag
@@ -103,7 +107,11 @@
 			fixed4 frag(v2f i) : SV_Target
 			{
 				fixed4 tex = tex2D(_MainTex, i.uv);
-				fixed4 refl = tex2Dproj(_ReflectionTex, UNITY_PROJ_COORD(i.refl));
+
+				//UNITY_PROJ_COORD：given a 4-component vector, return a texture coordinate suitable for projected texture reads.
+				//On most platforms this returns the given value directly.
+
+				fixed4 refl = tex2Dproj(_ReflectionTex, UNITY_PROJ_COORD(i.refl)); // 相当于tex2D(_ReflectionTex, i.refl.xy / i.refl.w);
 				return tex * refl;
 			}
 			ENDCG
