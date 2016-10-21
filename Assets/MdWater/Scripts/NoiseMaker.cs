@@ -301,9 +301,9 @@ namespace MynjenDook
                     // test: 绑纹理到plane、写tga文件
                     if (t == 0)
                     {
-                        if (Water.texviewRenderer != null)
+                        if (Water.TestNoiseView != null)
                         {
-                            Water.texviewRenderer.sharedMaterial.mainTexture = tex;
+                            Water.TestNoiseView.sharedMaterial.mainTexture = tex;
                             Water.material.SetTexture("_VertTex", tex);
                             //Debug.LogFormat("[upload noise] frame: {0}, time: {1}", Water.FrameCount, Time.time - Water.LastTime);
                             //string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\mdwater\noise0_{0}.tga", Water.FrameCount);

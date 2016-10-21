@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace MynjenDook
 {
@@ -7,24 +8,27 @@ namespace MynjenDook
     [DisallowMultipleComponent]
     public class MdWater : MonoBehaviour
     {
-        public MdPredefinition predefinition = null;
+        public MdPredefinition predefinition = null;                        // components
         public MdOldParams oldparams = null;
         public MdUserParams userparams = null;
         public MdTexturing texturing = null;
         public MdSurface surface = null;
 
-        int m_maxProfile = 0;
-        public GameObject[] ProfileNodes;
+        int m_maxProfile = 0;                                               // 当前设备支持最大profile
+        private GameObject[] ProfileNodes;                                  // 不同profile的水体容器结点
+        public Material material = null;                                    // 水材质
 
-        public Material material = null;
+        public List<GameObject> ReflectionIgnoreList = null;                // 反射过滤列表
+        private Queue<bool> ReflectionIgnoreSavedActive = null;
 
 
-        // Test:
+        ////////////////////////////////////////////////////////////////
+        // 测试
         private int m_framecount = 0;
         public int FrameCount { get { return m_framecount; } }
         private float m_lasttime = 0;
         public float LastTime { get { return m_lasttime; } }
-        public Renderer texviewRenderer;
+        public Renderer TestNoiseView;
 
         void Awake()
         {
@@ -73,6 +77,8 @@ namespace MynjenDook
             surface.Initialize(Vector3.zero, Vector3.up, m_maxProfile);
 
             BuildWaterMeshes();
+
+            ReflectionIgnoreSavedActive = new Queue<bool>();
         }
 
         private void BuildWaterMeshes()
@@ -136,6 +142,30 @@ namespace MynjenDook
         private int GetProfile()
         {
             return surface.m_noiseMaker.m_profile;
+        }
+
+        public void BeginReflect(bool bBegin)
+        {
+            if (ReflectionIgnoreList == null)
+                return;
+
+            if (bBegin)
+            {
+                ReflectionIgnoreSavedActive.Clear();
+                foreach (GameObject o in ReflectionIgnoreList)
+                {
+                    ReflectionIgnoreSavedActive.Enqueue(o.activeSelf);
+                    o.SetActive(false);
+                }
+            }
+            else
+            {
+                foreach (GameObject o in ReflectionIgnoreList)
+                {
+                    bool oldActiva = ReflectionIgnoreSavedActive.Dequeue();
+                    o.SetActive(oldActiva);
+                }
+            }
         }
 
 

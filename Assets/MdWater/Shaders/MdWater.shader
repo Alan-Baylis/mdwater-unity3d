@@ -79,6 +79,8 @@
 			#pragma target 3.0 // VTF
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma multi_compile_fog
+
 			#include "UnityCG.cginc"
 			
 			sampler2D _MainTex;
@@ -91,6 +93,7 @@
 				float2 uv : TEXCOORD0;
 				float4 refl : TEXCOORD1;
 				float4 pos : SV_POSITION;
+				UNITY_FOG_COORDS(2) // v2f结构体里，index要看前面使用了几个TEXCOORD
 			};
 			
 			v2f vert(float4 pos : POSITION, float2 uv : TEXCOORD0)
@@ -101,6 +104,7 @@
 				pos.y += tex.r - 0.5;
 				o.pos = mul (UNITY_MATRIX_MVP, pos);
 				o.refl = ComputeScreenPos(o.pos);
+				UNITY_TRANSFER_FOG(o, o.pos);
 				return o;
 			}
 
@@ -110,9 +114,13 @@
 
 				//UNITY_PROJ_COORD：given a 4-component vector, return a texture coordinate suitable for projected texture reads.
 				//On most platforms this returns the given value directly.
-
 				fixed4 refl = tex2Dproj(_ReflectionTex, UNITY_PROJ_COORD(i.refl)); // 相当于tex2D(_ReflectionTex, i.refl.xy / i.refl.w);
-				return tex * refl;
+				tex *= refl;
+
+				UNITY_APPLY_FOG(i.fogCoord, tex);
+				//UNITY_APPLY_FOG_COLOR(i.fogCoord, tex, fixed4(0, 0, 0, 0));
+
+				return tex;
 			}
 			ENDCG
 	    }

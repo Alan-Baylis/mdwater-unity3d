@@ -825,6 +825,7 @@ namespace MynjenDook
 
             MdReflection reflection = SubMesh.AddComponent<MdReflection>();
             reflection.Initialize();
+            reflection.Water = Water;
 
             BoxCollider bc = SubMesh.AddComponent<BoxCollider>();
 

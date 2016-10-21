@@ -12,6 +12,8 @@ namespace MynjenDook
     //[RequireComponent(typeof(MdWater))] // 搬到submesh里，不需要water组件（父亲结点才绑water）
     public class MdReflection : MonoBehaviour
     {
+        public MdWater Water = null;
+
         public bool m_DisablePixelLights = true;
         public int m_TextureSize = 256;
         public float m_ClipPlaneOffset = 0.07f;
@@ -97,6 +99,9 @@ namespace MynjenDook
             m_ReflectCamera.projectionMatrix = projection;
 
             m_ReflectCamera.cullingMask = ~(1 << 4) & m_ReflectLayers.value; // never render water layer
+            m_ReflectCamera.cullingMask = ~(1 << 5) & m_ReflectLayers.value; // never render UI layer
+			
+            Water.BeginReflect(true);
             m_ReflectCamera.targetTexture = m_ReflectionTexture;
             //GL.SetRevertBackfacing (true);
             GL.invertCulling = true;
@@ -107,6 +112,8 @@ namespace MynjenDook
             m_ReflectCamera.transform.position = oldpos;
             //GL.SetRevertBackfacing (false);
             GL.invertCulling = false;
+            Water.BeginReflect(false);
+
             Material[] materials = rend.sharedMaterials;
             foreach (Material mat in materials)
             {
