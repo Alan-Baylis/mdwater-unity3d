@@ -301,14 +301,12 @@ namespace MynjenDook
                     // test: 绑纹理到plane、写tga文件
                     if (t == 0)
                     {
+                        Water.material.SetTexture("_VertTex", tex);
                         if (Water.TestNoiseView != null)
-                        {
                             Water.TestNoiseView.sharedMaterial.mainTexture = tex;
-                            Water.material.SetTexture("_VertTex", tex);
-                            //Debug.LogFormat("[upload noise] frame: {0}, time: {1}", Water.FrameCount, Time.time - Water.LastTime);
-                            //string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\mdwater\noise0_{0}.tga", Water.FrameCount);
-                            //tex.Save2Tga(fileName);
-                        }
+                        //Debug.LogFormat("[upload noise] frame: {0}, time: {1}", Water.FrameCount, Time.time - Water.LastTime);
+                        //string fileName = string.Format(@"C:\Users\kuangsihao1\Desktop\mdwater\noise0_{0}.tga", Water.FrameCount);
+                        //tex.Save2Tga(fileName);
                     }
 
                     continue; // 只lock第一个level
