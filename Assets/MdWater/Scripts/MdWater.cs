@@ -132,12 +132,12 @@ namespace MynjenDook
             {
                 Debug.Assert(Pivot != null);
                 Vector3 posLookAt = Pivot.transform.position;
-                CalcNoiseDisplacement(posLookAt.x, posLookAt.y, ref m_displacement.waterx, ref m_displacement.watery, ref m_displacement.noisex, ref m_displacement.noisey);
+                CalcNoiseDisplacement(posLookAt.x, posLookAt.z, ref m_displacement.waterx, ref m_displacement.watery, ref m_displacement.noisex, ref m_displacement.noisey);
                 float fNoiseDisplaceX = m_displacement.noisex;
                 float fNoiseDisplaceY = m_displacement.noisey;
                 material.SetFloat("gw_fNoiseDisplacementX", fNoiseDisplaceX);
                 material.SetFloat("gw_fNoiseDisplacementY", fNoiseDisplaceY);
-                Vector3 kWaterPos = new Vector3(m_displacement.waterx, m_displacement.watery, 0);
+                Vector3 kWaterPos = new Vector3(m_displacement.waterx, 0, m_displacement.watery);
                 this.transform.position = kWaterPos;
             }
 
