@@ -139,7 +139,7 @@ namespace MynjenDook
                 if (name.StartsWith("gw_f"))
                 {
                     Water.material.SetFloat(name, p.m_Value);
-                    Debug.LogWarningFormat("UserParams update shder : {0} = {1}", name, p.m_Value);
+                    //Debug.LogWarningFormat("UserParams update shder : {0} = {1}", name, p.m_Value);
                 }
             }
         }
