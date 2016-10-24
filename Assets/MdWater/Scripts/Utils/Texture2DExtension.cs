@@ -84,10 +84,6 @@ namespace MynjenDook
                 for (int x = 0; x < width; x++)
                 {
                     float fColor = array[y * width + x];
-                    if (fColor < 0 || fColor > 1)
-                    {
-                        int iii = 0;
-                    }
                     byte bValue = (byte)(fColor * 255.0f);
                     byte a = 255;
                     byte b = bValue;
