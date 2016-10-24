@@ -3,7 +3,22 @@ guid: 537ce1b038c16ff418bdd5925a61c1cc
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
     4300000: PlayerChar
+    7400000: idle
+    7400002: walk
+    7400004: walkback
+    7400006: strafeleft
+    7400008: straferight
+    7400010: strafeforwardleft
+    7400012: strafeforwardright
+    7400014: strafebackleft
+    7400016: strafebackright
+    7400018: jump
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -11,7 +26,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleCurves: 1
+    resampleRotations: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
