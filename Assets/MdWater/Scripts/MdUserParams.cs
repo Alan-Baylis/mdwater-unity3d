@@ -11,6 +11,8 @@ namespace MynjenDook
     [RequireComponent(typeof(MdWater))]
     public class MdUserParams : MonoBehaviour
     {
+        public MdWater Water = null;
+
         public enum UserParams
         {
             WaterColorR = 0,
@@ -127,6 +129,19 @@ namespace MynjenDook
             Params[(int)UserParams.gw_fNoiseWaveHeightDiv] = new Param(UserParams.gw_fNoiseWaveHeightDiv.ToString(), 60f,     true);
             Params[(int)UserParams.gw_fSunNormalSpacing]   = new Param(UserParams.gw_fSunNormalSpacing.ToString()  , 0.007f,  true);
             Params[(int)UserParams.gw_fSunNormalRatio]     = new Param(UserParams.gw_fSunNormalRatio.ToString()    , 0.86f,   true);
+        }
+
+        public void UpdateWaterParams()
+        {
+            foreach (Param p in Params)
+            {
+                string name = p.m_Name;
+                if (name.StartsWith("gw_f"))
+                {
+                    Water.material.SetFloat(name, p.m_Value);
+                    Debug.LogWarningFormat("UserParams update shder : {0} = {1}", name, p.m_Value);
+                }
+            }
         }
 
         public float GetFloat(UserParams p)
