@@ -8,7 +8,7 @@ namespace MynjenDook
     {
         public enum Macro
         {
-            MAXNOISE = 10000,
+            MAXNOISE = 8192,
         }
 
         private MdWater m_water = null;
@@ -274,7 +274,7 @@ namespace MynjenDook
                             Debug.LogErrorFormat("water p_noise exceeds MAXNOISE: t:{0} i:{1} value:{2} MAX:{3}", t, i, value, MacroMax);
                         #endif
 
-                        value = (value - (-MacroMax)) / (MacroMax * 2f); // 经调试value最大5000+，所以除以6000，匹配[0, 1]颜色空间
+                        value = (value - (-MacroMax)) / (MacroMax * 2f); // 经验值：value最大8000，调解到[0, 1]颜色空间
 
                         fdata[i] = value;
                         //fdata[i] = 3.14f; // 

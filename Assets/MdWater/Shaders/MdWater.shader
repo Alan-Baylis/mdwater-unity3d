@@ -57,7 +57,7 @@
 		// noise from proj grid:
 		gw_fNoiseDisplacementX          ("gw_fNoiseDisplacementX"    , float)     = 0			        // proj grid noise 滚屏参数
 		gw_fNoiseDisplacementY          ("gw_fNoiseDisplacementY"    , float)     = 0
-		gw_fNoiseWaveHeightDiv          ("gw_fNoiseWaveHeightDiv"    , float)     = 60		            // 高度倒数修正
+		gw_fNoiseWaveHeightDiv          ("gw_fNoiseWaveHeightDiv"    , float)     = 2		            //  *  高度/*倒数修正*/
 		gw_np_size                      ("gw_np_size"                , float)     = 128					// 要和c++的宏一致
 		gw_waterlv2                     ("gw_waterlv2"               , float)     = 65					// 要和c++的宏一致
 
@@ -87,22 +87,51 @@
 			sampler2D _VertTex;
 			sampler2D _ReflectionTex;
 			float4 _MainTex_ST;
+
+			float gw_np_size;
+			float gw_fNoiseWaveHeightDiv;
+			float gw_fNoiseDisplacementX;
+			float gw_fNoiseDisplacementY;
+
+			float CalcVertexHeight(float vx, float vy)
+			{
+				float nScale = 4; // 因为noise的每一跳距离是vspacing2，所以所有顶点计算displacement时都要乘以4
+				vx = vx + gw_fNoiseDisplacementX * nScale;
+				vy = vy + gw_fNoiseDisplacementY * nScale;
+
+				if (vx < 0)
+					vx += gw_np_size;
+				else if (vx >= gw_np_size)
+					vx -= gw_np_size;
+				if (vy < 0)
+					vy += gw_np_size;
+				else if (vy >= gw_np_size)
+					vy -= gw_np_size;
+
+				float fHeight = tex2Dlod(_VertTex, float4(vx / gw_np_size, vy / gw_np_size, 0, 0));
+				fHeight = (fHeight - 0.5) * gw_fNoiseWaveHeightDiv * 2; // gw_fNoiseWaveHeightDiv原来是波浪高度倒数，这里含义变了；以后改名
+				return fHeight;
+			}
 			
 			struct v2f
 			{
+				float4 pos : SV_POSITION;
 				float2 uv : TEXCOORD0;
 				float4 refl : TEXCOORD1;
-				float4 pos : SV_POSITION;
+				
 				UNITY_FOG_COORDS(2) // v2f结构体里，index要看前面使用了几个TEXCOORD
 			};
 			
-			v2f vert(float4 pos : POSITION, float2 uv : TEXCOORD0)
+			v2f vert(appdata_full v)
 			{
 				v2f o;
-				o.uv = TRANSFORM_TEX(uv, _MainTex);
-				float4 tex = tex2Dlod(_VertTex, float4(o.uv, 0, 0));
-				pos.y += tex.r - 0.5;
-				o.pos = mul (UNITY_MATRIX_MVP, pos);
+				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+
+				float vx = v.color.x;
+				float vy = v.color.y;
+				float fHeight = CalcVertexHeight(vx, vy);
+				v.vertex.y += fHeight;
+				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
 				o.refl = ComputeScreenPos(o.pos);
 				UNITY_TRANSFER_FOG(o, o.pos);
 				return o;
@@ -122,6 +151,7 @@
 
 				return tex;
 			}
+
 			ENDCG
 	    }
 	}

@@ -7,7 +7,7 @@ public class RPG_Camera : MonoBehaviour {
 
     public Transform cameraPivot;
     public float distance = 5f;
-    public float distanceMax = 30f;
+    public float distanceMax = 1000f;
     public float mouseSpeed = 8f;
     public float mouseScroll = 15f;
     public float mouseSmoothingFactor = 0.08f;

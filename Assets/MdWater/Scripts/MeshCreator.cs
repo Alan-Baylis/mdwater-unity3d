@@ -409,6 +409,7 @@ namespace MynjenDook
 
             pkMesh.vertices = vertices;
             pkMesh.uv = uv;
+            pkMesh.colors = colors;
             pkMesh.triangles = triangles;
 
             pkMesh.RecalculateBounds();

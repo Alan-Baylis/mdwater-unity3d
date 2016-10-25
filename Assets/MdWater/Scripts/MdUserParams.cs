@@ -116,7 +116,7 @@ namespace MynjenDook
             Params[(int)UserParams.CausticsSpeed]          = new Param(UserParams.CausticsSpeed.ToString()         , 0.6f,    false);
             Params[(int)UserParams.gw_fWaveVertexSpacing]  = new Param(UserParams.gw_fWaveVertexSpacing.ToString() , 12.0f,   true); // 27
             Params[(int)UserParams.gw_fWaveRatio]          = new Param(UserParams.gw_fWaveRatio.ToString()         , 0.28f,   true); // 5
-            Params[(int)UserParams.WaveHeightDiv]          = new Param(UserParams.WaveHeightDiv.ToString()         , 55.0f,   false);
+            Params[(int)UserParams.WaveHeightDiv]          = new Param(UserParams.WaveHeightDiv.ToString()         , 2.0f,    false);
             Params[(int)UserParams.ClipHeight]             = new Param(UserParams.ClipHeight.ToString()            , 80.0f,   false);
             Params[(int)UserParams.SunColorR]              = new Param(UserParams.SunColorR.ToString()             , 1.2f,    false);
             Params[(int)UserParams.SunColorG]              = new Param(UserParams.SunColorG.ToString()             , 0.4f,    false);
@@ -126,7 +126,7 @@ namespace MynjenDook
             Params[(int)UserParams.SunFaceTo]              = new Param(UserParams.SunFaceTo.ToString()             , 90.0f,   false);
             Params[(int)UserParams.SunHeight]              = new Param(UserParams.SunHeight.ToString()             , 8.3f,    false);
             Params[(int)UserParams.gw_fNoiseUVScale]       = new Param(UserParams.gw_fNoiseUVScale.ToString()      , 128f,    true);
-            Params[(int)UserParams.gw_fNoiseWaveHeightDiv] = new Param(UserParams.gw_fNoiseWaveHeightDiv.ToString(), 60f,     true);
+            Params[(int)UserParams.gw_fNoiseWaveHeightDiv] = new Param(UserParams.gw_fNoiseWaveHeightDiv.ToString(), 2.0f,    true);
             Params[(int)UserParams.gw_fSunNormalSpacing]   = new Param(UserParams.gw_fSunNormalSpacing.ToString()  , 0.007f,  true);
             Params[(int)UserParams.gw_fSunNormalRatio]     = new Param(UserParams.gw_fSunNormalRatio.ToString()    , 0.86f,   true);
         }
