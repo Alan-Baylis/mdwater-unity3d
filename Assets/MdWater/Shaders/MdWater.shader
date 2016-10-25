@@ -145,8 +145,8 @@
 			v2f vert(appdata_full v)
 			{
 				v2f o;
-				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
-				//o.uv = CalcVertexTexcoord(float2(v.color.z, v.color.w));
+				//o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+				o.uv = CalcVertexTexcoord(float2(v.color.z, v.color.w));
 
 				float vx = v.color.x;
 				float vy = v.color.y;
