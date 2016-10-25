@@ -89,13 +89,14 @@
 			float4 _MainTex_ST;
 
 			float gw_np_size;
+			float gw_waterlv2;
 			float gw_fNoiseWaveHeightDiv;
 			float gw_fNoiseDisplacementX;
 			float gw_fNoiseDisplacementY;
 
 			float CalcVertexHeight(float vx, float vy)
 			{
-				float nScale = 4; // 因为noise的每一跳距离是vspacing2，所以所有顶点计算displacement时都要乘以4
+				float nScale = 4; // 因为noise的每一跳距离是vspacing2，所以所有顶点计算displacement时都要乘以4； 换句话说gw_fNoiseDisplacementX每+1，noise图要跳4个点
 				vx = vx + gw_fNoiseDisplacementX * nScale;
 				vy = vy + gw_fNoiseDisplacementY * nScale;
 
@@ -112,26 +113,47 @@
 				fHeight = (fHeight - 0.5) * gw_fNoiseWaveHeightDiv * 2; // gw_fNoiseWaveHeightDiv原来是波浪高度倒数，这里含义变了；以后改名
 				return fHeight;
 			}
+
+			float4 CalcVertexNormal(float vx, float vy)
+			{
+				return float4 (
+					CalcVertexHeight(vx - 1, vy),
+					CalcVertexHeight(vx + 1, vy),
+					CalcVertexHeight(vx, vy - 1),
+					CalcVertexHeight(vx, vy + 1)
+					);
+			}
+
+			float2 CalcVertexTexcoord(float2 kInitialUV)
+			{
+				float fDeltaTc = 2.0f / (gw_waterlv2 - 1); // noise每一跳uv增量：ring2的uv总量是2，因为ring0有2*2个，uv从(4,4)到(6,6)；而noise每一跳是vspacing2
+				float u = kInitialUV.x + gw_fNoiseDisplacementX * fDeltaTc;
+				float v = kInitialUV.y + gw_fNoiseDisplacementY * fDeltaTc;
+				return float2(u, v);
+			}
 			
 			struct v2f
 			{
-				float4 pos : SV_POSITION;
-				float2 uv : TEXCOORD0;
-				float4 refl : TEXCOORD1;
+				float4 pos		: SV_POSITION;
+				float2 uv		: TEXCOORD0;
+				float4 refl		: TEXCOORD1;
+				float4 normal	: TEXCOORD2;
 				
-				UNITY_FOG_COORDS(2) // v2f结构体里，index要看前面使用了几个TEXCOORD
+				UNITY_FOG_COORDS(3) // v2f结构体里，index要看前面使用了几个TEXCOORD
 			};
 			
 			v2f vert(appdata_full v)
 			{
 				v2f o;
 				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+				//o.uv = CalcVertexTexcoord(float2(v.color.z, v.color.w));
 
 				float vx = v.color.x;
 				float vy = v.color.y;
 				float fHeight = CalcVertexHeight(vx, vy);
 				v.vertex.y += fHeight;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.normal = CalcVertexNormal(vx, vy);
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.refl = ComputeScreenPos(o.pos);
 				UNITY_TRANSFER_FOG(o, o.pos);
 				return o;
