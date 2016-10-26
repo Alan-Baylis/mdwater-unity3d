@@ -9,9 +9,10 @@ namespace MynjenDook
     [AddComponentMenu("MynjenDook/MdReflection")]
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
-    //[RequireComponent(typeof(MdWater))] // 搬到submesh里，不需要water组件（父亲结点才绑water）
+    [RequireComponent(typeof(MdWater))]
     public class MdReflection : MonoBehaviour
     {
+        [HideInInspector]
         public MdWater Water = null;
 
         public bool m_DisablePixelLights = true;
@@ -54,8 +55,9 @@ namespace MynjenDook
         // camera will just work!
         public void OnWillRenderObject()
         {
-            var rend = GetComponent<Renderer>();
-            if (!enabled || !rend || !rend.sharedMaterial || !rend.enabled)
+            //Debug.LogWarningFormat("mesh will render : {0}", Time.frameCount);
+
+            if (!enabled)
                 return;
 
             Camera cam = Camera.current;
@@ -114,11 +116,8 @@ namespace MynjenDook
             GL.invertCulling = false;
             Water.BeginReflect(false);
 
-            Material[] materials = rend.sharedMaterials;
-            foreach (Material mat in materials)
-            {
-                if (mat.HasProperty("_ReflectionTex")) mat.SetTexture("_ReflectionTex", m_ReflectionTexture);
-            }
+            // shader map
+            Water.material.SetTexture("_ReflectionTex", m_ReflectionTexture);
 
             // Restore pixel light count
             if (m_DisablePixelLights)

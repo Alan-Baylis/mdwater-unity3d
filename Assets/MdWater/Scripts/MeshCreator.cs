@@ -824,9 +824,9 @@ namespace MynjenDook
             MeshRenderer mr = SubMesh.AddComponent<MeshRenderer>();
             mr.material = Water.material;
 
-            MdReflection reflection = SubMesh.AddComponent<MdReflection>();
-            reflection.Initialize();
-            reflection.Water = Water;
+            MdRenderable renderable = SubMesh.AddComponent<MdRenderable>();
+            renderable.Initialize();
+            renderable.Water = Water;
 
             BoxCollider bc = SubMesh.AddComponent<BoxCollider>();
 

@@ -139,7 +139,7 @@
 				float4 refl		: TEXCOORD1;
 				float4 normal	: TEXCOORD2;
 				
-				UNITY_FOG_COORDS(3) // v2f结构体里，index要看前面使用了几个TEXCOORD
+				UNITY_FOG_COORDS(3) // 这里index要看前面已定义多少个TEXCOORD
 			};
 			
 			v2f vert(appdata_full v)

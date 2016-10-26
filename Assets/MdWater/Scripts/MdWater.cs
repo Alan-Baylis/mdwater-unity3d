@@ -14,8 +14,12 @@ namespace MynjenDook
         public MdUserParams userparams = null;
         public MdTexturing texturing = null;
         public MdSurface surface = null;
+        public MdReflection reflect = null;
         [HideInInspector]
         public Camera m_camera;                                             // camera, init时赋值一次
+
+        private Camera m_LastCamera;                                        // 记录上一次做反射时的camera和帧号，避免冗余做反射贴图
+        private int m_LastFrameCount = 0;                                   //
         
         int m_maxProfile = 0;                                               // 当前设备支持最大profile
         private GameObject[] ProfileNodes;                                  // 不同profile的水体容器结点
@@ -74,6 +78,32 @@ namespace MynjenDook
         {
         }
 
+        public void Initialize()
+        {
+            predefinition = GetComponent<MdPredefinition>();
+            oldparams = GetComponent<MdOldParams>();
+            userparams = GetComponent<MdUserParams>();
+            texturing = GetComponent<MdTexturing>();
+            surface = GetComponent<MdSurface>();
+            reflect = GetComponent<MdReflection>();
+            //reflection组件搬到submesh上
+            SetupCamera(Camera.main);
+
+            predefinition.Initialize();
+            oldparams.Initialize();
+            userparams.Initialize();
+            userparams.Water = this;
+            texturing.Initialize();
+            m_maxProfile = CheckHardware();
+            surface.Initialize(Vector3.zero, Vector3.up, m_maxProfile);
+            reflect.Initialize();
+            reflect.Water = this;
+
+            BuildWaterMeshes();
+
+            ReflectionIgnoreSavedActive = new Queue<bool>();
+        }
+
         void Update()
         {
             // update xzh water params
@@ -108,7 +138,7 @@ namespace MynjenDook
             // 雾
             m_FogEnable = RenderSettings.fog;
             float fbFogEnable = m_FogEnable ? 1.0f : 0.0f;
-            material.SetFloat("gw_fFogEnable", fbFogEnable);        
+            material.SetFloat("gw_fFogEnable", fbFogEnable);
             Color kFogInfo = new Color(RenderSettings.fogColor.r, RenderSettings.fogColor.g, RenderSettings.fogColor.b, m_FogDepth);
             material.SetColor("gw_fFog", kFogInfo);
 
@@ -177,29 +207,6 @@ namespace MynjenDook
 
             m_framecount++;
             m_lasttime = Time.time;
-        }
-
-        public void Initialize()
-        {
-            predefinition = GetComponent<MdPredefinition>();
-            oldparams = GetComponent<MdOldParams>();
-            userparams = GetComponent<MdUserParams>();
-            texturing = GetComponent<MdTexturing>();
-            surface = GetComponent<MdSurface>();
-            //reflection组件搬到submesh上
-            SetupCamera(Camera.main);
-
-            predefinition.Initialize();
-            oldparams.Initialize();
-            userparams.Initialize();
-            userparams.Water = this;
-            texturing.Initialize();
-            m_maxProfile = CheckHardware();
-            surface.Initialize(Vector3.zero, Vector3.up, m_maxProfile);
-
-            BuildWaterMeshes();
-
-            ReflectionIgnoreSavedActive = new Queue<bool>();
         }
 
         public void SetupCamera(Camera c)
@@ -292,6 +299,17 @@ namespace MynjenDook
                     bool oldActiva = ReflectionIgnoreSavedActive.Dequeue();
                     o.SetActive(oldActiva);
                 }
+            }
+        }
+
+        public void OnWillRenderObject(Camera camera)
+        {
+            int curFrameCount = Time.frameCount;
+            if (m_LastCamera != camera || m_LastFrameCount != curFrameCount) // 避免冗余做反射贴图
+            {
+                reflect.OnWillRenderObject();
+                m_LastCamera = camera;
+                m_LastFrameCount = curFrameCount;
             }
         }
 
