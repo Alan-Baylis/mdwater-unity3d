@@ -27,6 +27,8 @@ namespace MynjenDook
 
         public List<GameObject> ReflectionIgnoreList = null;                // 反射过滤列表
         private Queue<bool> ReflectionIgnoreSavedActive = null;
+        public List<GameObject> RefractionIgnoreList = null;                // 折射过滤列表
+        private Queue<bool> RefractionIgnoreSavedActive = null;
 
         public Transform Pivot = null;                                      // 水体中心
         [HideInInspector]
@@ -297,6 +299,30 @@ namespace MynjenDook
                 foreach (GameObject o in ReflectionIgnoreList)
                 {
                     bool oldActiva = ReflectionIgnoreSavedActive.Dequeue();
+                    o.SetActive(oldActiva);
+                }
+            }
+        }
+
+        public void BeginRefract(bool bBegin)
+        {
+            if (RefractionIgnoreList == null)
+                return;
+
+            if (bBegin)
+            {
+                RefractionIgnoreSavedActive.Clear();
+                foreach (GameObject o in RefractionIgnoreList)
+                {
+                    RefractionIgnoreSavedActive.Enqueue(o.activeSelf);
+                    o.SetActive(false);
+                }
+            }
+            else
+            {
+                foreach (GameObject o in RefractionIgnoreList)
+                {
+                    bool oldActiva = RefractionIgnoreSavedActive.Dequeue();
                     o.SetActive(oldActiva);
                 }
             }
