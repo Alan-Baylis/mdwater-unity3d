@@ -30,7 +30,7 @@ namespace MynjenDook
         // camera will just work!
         public void OnWillRenderObject()
         {
-            Water.OnWillRenderObject(Camera.current);
+            Water._OnWillRenderObject(Camera.current);
         }
 
         // Cleanup all the objects we possibly have created

@@ -15,12 +15,15 @@ namespace MynjenDook
         public MdTexturing texturing = null;
         public MdSurface surface = null;
         public MdReflection reflect = null;
+        public MdRefraction refract = null;
         [HideInInspector]
         public Camera m_camera;                                             // camera, init时赋值一次
 
-        private Camera m_LastCamera;                                        // 记录上一次做反射时的camera和帧号，避免冗余做反射贴图
-        private int m_LastFrameCount = 0;                                   //
-        
+        private int m_LastReflectFrameCount = 0;                            // 记录上一次做反射、折射的camera和帧号，避免冗余做反射贴图
+        private int m_LastRefractFrameCount = 0;                            //
+        private Camera m_LastReflectCamera;                                 //
+        private Camera m_LastRefractCamera;                                 //
+
         int m_maxProfile = 0;                                               // 当前设备支持最大profile
         private GameObject[] ProfileNodes;                                  // 不同profile的水体容器结点
         public Material material = null;                                    // 水材质
@@ -58,6 +61,9 @@ namespace MynjenDook
         private float m_lasttime = 0;
         public float LastTime { get { return m_lasttime; } }
         public Renderer TestNoiseView;
+        public Renderer TestReflectView;
+        public Renderer TestRefractView;
+
 
         void Awake()
         {
@@ -88,6 +94,7 @@ namespace MynjenDook
             texturing = GetComponent<MdTexturing>();
             surface = GetComponent<MdSurface>();
             reflect = GetComponent<MdReflection>();
+            refract = GetComponent<MdRefraction>();
             //reflection组件搬到submesh上
             SetupCamera(Camera.main);
 
@@ -100,10 +107,13 @@ namespace MynjenDook
             surface.Initialize(Vector3.zero, Vector3.up, m_maxProfile);
             reflect.Initialize();
             reflect.Water = this;
+            refract.Initialize();
+            refract.Water = this;
 
             BuildWaterMeshes();
 
             ReflectionIgnoreSavedActive = new Queue<bool>();
+            RefractionIgnoreSavedActive = new Queue<bool>();
         }
 
         void Update()
@@ -328,14 +338,20 @@ namespace MynjenDook
             }
         }
 
-        public void OnWillRenderObject(Camera camera)
+        public void _OnWillRenderObject(Camera camera) // 函数名加下划线避免重名而被unity错误调到
         {
             int curFrameCount = Time.frameCount;
-            if (m_LastCamera != camera || m_LastFrameCount != curFrameCount) // 避免冗余做反射贴图
+            if (m_LastReflectCamera != camera || m_LastReflectFrameCount != curFrameCount) // 避免冗余做反射贴图
             {
                 reflect.OnWillRenderObject();
-                m_LastCamera = camera;
-                m_LastFrameCount = curFrameCount;
+                m_LastReflectCamera = camera;
+                m_LastReflectFrameCount = curFrameCount;
+            }
+            if (m_LastRefractCamera != camera || m_LastRefractFrameCount != curFrameCount) // 避免冗余做折射贴图
+            {
+                refract.OnWillRenderObject();
+                m_LastRefractCamera = camera;
+                m_LastRefractFrameCount = curFrameCount;
             }
         }
 

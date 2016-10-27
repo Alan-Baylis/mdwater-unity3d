@@ -16,8 +16,8 @@ namespace MynjenDook
         public MdWater Water = null;
 
         public bool m_DisablePixelLights = true;
-        public int m_TextureSize = 256;
-        public float m_ClipPlaneOffset = 0.07f;
+        public int m_TextureSize = 1024;
+        public float m_ClipPlaneOffset = 0.01f; // 0.07f
 
         public LayerMask m_RefractLayers = -1;
 
@@ -89,8 +89,10 @@ namespace MynjenDook
             Vector4 clipPlane = CameraSpacePlane(m_RefractCamera, pos, normal, -1.0f);
             m_RefractCamera.projectionMatrix = cam.CalculateObliqueMatrix(clipPlane);
 
-            m_RefractCamera.cullingMask = ~(1 << 4) & m_RefractLayers.value; // never render water layer
-            m_RefractCamera.cullingMask = ~(1 << 5) & m_RefractLayers.value; // never render UI layer
+            int layerWater = LayerMask.NameToLayer("Water");
+            int layerUI    = LayerMask.NameToLayer("UI");
+            m_RefractCamera.cullingMask = ~(1 << layerWater) & m_RefractLayers.value; // never render water layer, 4
+            m_RefractCamera.cullingMask = ~(1 << layerUI) & m_RefractLayers.value;    // never render UI    layer, 5
 
             Water.BeginRefract(true);
             m_RefractCamera.targetTexture = m_RefractionTexture;
@@ -100,6 +102,12 @@ namespace MynjenDook
             Water.BeginRefract(false);
             // shader map
             Water.material.SetTexture("_RefractionTex", m_RefractionTexture);
+            // test: 查看
+            if (cam == Camera.main)
+            {
+                if (Water.TestRefractView != null)
+                    Water.TestRefractView.sharedMaterial.mainTexture = m_RefractionTexture;
+            }
 
             // Restore pixel light count
             if (m_DisablePixelLights)

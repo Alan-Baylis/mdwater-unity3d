@@ -16,8 +16,8 @@ namespace MynjenDook
         public MdWater Water = null;
 
         public bool m_DisablePixelLights = true;
-        public int m_TextureSize = 256;
-        public float m_ClipPlaneOffset = 0.07f;
+        public int m_TextureSize = 1024;
+        public float m_ClipPlaneOffset = 0.01f; // 0.07f
 
         public LayerMask m_ReflectLayers = -1;
 
@@ -100,8 +100,10 @@ namespace MynjenDook
             Matrix4x4 projection = cam.CalculateObliqueMatrix(clipPlane);
             m_ReflectCamera.projectionMatrix = projection;
 
-            m_ReflectCamera.cullingMask = ~(1 << 4) & m_ReflectLayers.value; // never render water layer
-            m_ReflectCamera.cullingMask = ~(1 << 5) & m_ReflectLayers.value; // never render UI layer
+            int layerWater = LayerMask.NameToLayer("Water");
+            int layerUI    = LayerMask.NameToLayer("UI");
+            m_ReflectCamera.cullingMask = ~(1 << layerWater) & m_ReflectLayers.value; // never render water layer, 4
+            m_ReflectCamera.cullingMask = ~(1 << layerUI) & m_ReflectLayers.value;    // never render UI    layer, 5
 			
             Water.BeginReflect(true);
             m_ReflectCamera.targetTexture = m_ReflectionTexture;
@@ -118,6 +120,12 @@ namespace MynjenDook
 
             // shader map
             Water.material.SetTexture("_ReflectionTex", m_ReflectionTexture);
+            // test: 查看
+            if (cam == Camera.main)
+            {
+                if (Water.TestReflectView != null)
+                    Water.TestReflectView.sharedMaterial.mainTexture = m_ReflectionTexture;
+            }
 
             // Restore pixel light count
             if (m_DisablePixelLights)
