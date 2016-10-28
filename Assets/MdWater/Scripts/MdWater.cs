@@ -24,7 +24,9 @@ namespace MynjenDook
         private Camera m_LastReflectCamera;                                 //
         private Camera m_LastRefractCamera;                                 //
 
-        int m_maxProfile = 0;                                               // 当前设备支持最大profile
+        private int m_maxProfile = 0;                                       // 设备支持最大profile
+        private int m_profile = 0;                                          // 当前profile
+
         private GameObject[] ProfileNodes;                                  // 不同profile的水体容器结点
         public Material material = null;                                    // 水材质
 
@@ -255,17 +257,12 @@ namespace MynjenDook
             material.SetFloat("gw_fGrey", fGrey);
 
             // 设置water的shader和tex
-            string kTechniqueName;
-            if (GetProfile() == 0)
-            {
-                kTechniqueName = (texturing.m_bWireframe ? "Water_xzh_low_wireframe" : "Water_xzh_low");
-            }
+            if (m_profile == 0)
+                Shader.EnableKeyword("_WPROFILE_LOW");
             else
-            {
-                kTechniqueName = (texturing.m_bWireframe ? "Water_xzh_wireframe" : "Water_xzh");
-            }
-
-            material.EnableKeyword(""); // kTechniqueName
+                Shader.DisableKeyword("_WPROFILE_LOW");
+            if (texturing.m_bWireframe)
+                material.EnableKeyword("WIREFRAME");
 
             // texture map: reflect refract noise在其他地方
             material.SetTexture("_NormalTex1", pkNormalTexture);
@@ -327,6 +324,7 @@ namespace MynjenDook
         {
 	        if (profile > m_maxProfile)
 		        return;
+            m_profile = profile;
             surface.m_noiseMaker.m_profile = profile;
 
             predefinition.UpdatePredefinitions(profile);
@@ -337,10 +335,6 @@ namespace MynjenDook
 
             //GetWater()->Update(0); // todo:kuangsihao
             //m_spXzhWaterParam->SetValue("gw_fNormalUVScale1", profile == 0 ? 35.0f : 10.0f);
-        }
-        private int GetProfile()
-        {
-            return surface.m_noiseMaker.m_profile;
         }
 
         public void BeginReflect(bool bBegin)
@@ -490,6 +484,7 @@ namespace MynjenDook
         [ContextMenu("Test")]
         void Test()
         {
+            SetProfile(0);
         }
     }
 }

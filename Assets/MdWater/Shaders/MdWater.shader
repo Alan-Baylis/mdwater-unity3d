@@ -7,7 +7,7 @@
 		[Space(10)]
 
 		[Toggle(WIREFRAME)] _Wireframe    ("Wireframe?"				   , Float)     = 0
-		[KeywordEnum(High, Low)] _Quality ("Overlay mode"			   , Float)		= 0
+		[KeywordEnum(High, Low)] _WProfile("WProfile"			       , Float)		= 0
 
 
 		// 注意float最大默认值为999999
@@ -88,7 +88,7 @@
 			#pragma multi_compile_fog
 
 			#pragma shader_feature WIREFRAME
-			#pragma multi_compile _QUALITY_HIGH _QUALITY_LOW
+			#pragma multi_compile _WPROFILE_HIGH _WPROFILE_LOW
 
 			#include "UnityCG.cginc"
 			
@@ -188,10 +188,10 @@
 				UNITY_APPLY_FOG(i.fogCoord, tex); // UNITY_APPLY_FOG_COLOR(i.fogCoord, tex, fixed4(0, 0, 0, 0));
 
 				#if WIREFRAME
-				//tex = fixed4(1, 0, 0, 1);
+				tex = fixed4(1, 0, 0, 1);
 				#endif
-				#if _QUALITY_LOW
-				//tex = fixed4(0, 0, 1, 1);
+				#if _WPROFILE_LOW
+				tex = fixed4(0, 0, 1, 1);
 				#endif
 
 				return tex;
