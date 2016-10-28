@@ -118,7 +118,7 @@ namespace MynjenDook
 
         void Update()
         {
-            //PreRendering();
+            PreRendering();
 
             // update xzh water params
             userparams.UpdateWaterParams();

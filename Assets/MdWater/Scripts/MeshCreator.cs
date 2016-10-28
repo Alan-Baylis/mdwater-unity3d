@@ -177,7 +177,7 @@ namespace MynjenDook
                     }
                 }
 	        }
-            Debug.LogWarningFormat("水顶点数：{0}, 面数：{1}", uiTotalVerts, uiTotalTris);
+            Debug.LogFormat("顶点数：{0}, 面数：{1}", uiTotalVerts, uiTotalTris);
 
             // update
             //pkParent->UpdateProperties();
