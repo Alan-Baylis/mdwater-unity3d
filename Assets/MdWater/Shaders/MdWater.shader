@@ -28,51 +28,51 @@
 		gw_fNormalUVScale0                ("gw_fNormalUVScale0"        , float)     = 2
 		gw_fNormalUVScale1                ("gw_fNormalUVScale1"        , float)     = 2
 		gw_fNormalRatio                   ("gw_fNormalRatio"           , float)     = 0.5					// 2张normal图之间的比例
-		gw_fNormalNoise                   ("gw_fNormalNoise"           , float)     = 0.05				// normal扰动强度
-		gw_fNoNoiseScreen                 ("gw_fNoNoiseScreen"         , float)     = 0.03				// normal扰动在屏幕边缘变弱
+		gw_fNormalNoise                   ("gw_fNormalNoise"           , float)     = 0.05				    // normal扰动强度
+		gw_fNoNoiseScreen                 ("gw_fNoNoiseScreen"         , float)     = 0.03				    // normal扰动在屏幕边缘变弱
 
 		// fresnel
-		gw_fRefractRadius                 ("gw_fRefractRadius"         , float)     = 5000				// 折射圈: 离镜头很近，折射很强；离镜头远，海水颜色很强
-		gw_fRefractMinAlpha               ("gw_fRefractMinAlpha"       , float)     = 0.82			    // 折射最小alpha
+		gw_fRefractRadius                 ("gw_fRefractRadius"         , float)     = 50				    // *  折射圈: 离镜头很近，折射很强；离镜头远，海水颜色很强
+		gw_fRefractMinAlpha               ("gw_fRefractMinAlpha"       , float)     = 0.82			        // 折射最小alpha
 		gw_fFresnelBias                   ("gw_fFresnelBias"           , float)     = 0.1
 		gw_fFresnelScale                  ("gw_fFresnelScale"          , float)     = 1.3
 		gw_fFresnelPower                  ("gw_fFresnelPower"          , float)     = 0.3
 		gw_fFresnelMode                   ("gw_fFresnelMode"           , float)     = 1
-		gw_bRefract                       ("gw_bRefract"               , float)     = 1					// 是否折射
+		gw_bRefract                       ("gw_bRefract"               , float)     = 1					    // 是否折射
 
 		// caustics
 		gw_fCausticsUVScale               ("gw_fCausticsUVScale"       , float)     = 20				    // 刻蚀图uv密度
 		gw_fCausticsDepth                 ("gw_fCausticsDepth"         , float)     = 260					// 多深的水才没有刻蚀图
-		gw_fWorldSideLengthX              ("gw_fWorldSideLengthX"      , float)     = 18432		        //  *  整个大世界的宽
-		gw_fWorldSideLengthY              ("gw_fWorldSideLengthY"      , float)     = 18432		        //  *  整个大世界的高
-		gw_fCaustics                      ("gw_fCaustics"              , float)     = 1					// 如果是0.0f（通常是因为heightmap初始化失败了），就没有刻蚀图
+		gw_fWorldSideLengthX              ("gw_fWorldSideLengthX"      , float)     = 18432					//  *  整个大世界的宽
+		gw_fWorldSideLengthY              ("gw_fWorldSideLengthY"      , float)     = 18432					//  *  整个大世界的高
+		gw_fCaustics                      ("gw_fCaustics"              , float)     = 1						// 如果是0.0f（通常是因为heightmap初始化失败了），就没有刻蚀图
 
 		// sun
 		gw_SunLightDir                    ("gw_SunLightDir"            , Vector)    = (-0.5, 0, -0.1)		// 这里有点奇怪，xy是光的方向的负数，z是光的方向
 		gw_SunColor                       ("gw_SunColor"               , Color)     = (1.2, 0.4, 0.1, 1)	// 太阳光颜色
 		gw_fSunFactor                     ("gw_fSunFactor"             , float)     = 1.5					// 太阳高光强度
 		gw_fSunPower                      ("gw_fSunPower"              , float)     = 250					// how shiny we want the sun specular term on the water to be.
-		gw_fSunNormalSpacing              ("gw_fSunNormalSpacing"      , float)     = 0.007			    // 
-		gw_fSunNormalRatio                ("gw_fSunNormalRatio"        , float)     = 0.86				//
+		gw_fSunNormalSpacing              ("gw_fSunNormalSpacing"      , float)     = 0.007					// 
+		gw_fSunNormalRatio                ("gw_fSunNormalRatio"        , float)     = 0.86					//
 
 		// fog
-		gw_fFogEnable                     ("gw_fFogEnable"             , float)     = 1					// 是否启用雾
-		gw_fFog                           ("gw_fFog"                   , Vector)    = (1, 1, 1, 0)		// xyz颜色 w深度
-		gw_fFogMaxDistance                ("gw_fFogMaxDistance"        , float)     = 30000				// 这个距离之外fog强度都为1
+		gw_fFogEnable                     ("gw_fFogEnable"             , float)     = 1						// 是否启用雾
+		gw_fFog                           ("gw_fFog"                   , Vector)    = (1, 1, 1, 0)			// xyz颜色 w深度
+		gw_fFogMaxDistance                ("gw_fFogMaxDistance"        , float)     = 30000					// 这个距离之外fog强度都为1
 
 		// noise from proj grid:
-		gw_fNoiseDisplacementX            ("gw_fNoiseDisplacementX"    , float)     = 0			        // proj grid noise 滚屏参数
+		gw_fNoiseDisplacementX            ("gw_fNoiseDisplacementX"    , float)     = 0						// proj grid noise 滚屏参数
 		gw_fNoiseDisplacementY            ("gw_fNoiseDisplacementY"    , float)     = 0
-		gw_fNoiseWaveHeightDiv            ("gw_fNoiseWaveHeightDiv"    , float)     = 2		            //  *  高度/*倒数修正*/
+		gw_fNoiseWaveHeightDiv            ("gw_fNoiseWaveHeightDiv"    , float)     = 2						//  *  高度/*倒数修正*/
 		gw_np_size                        ("gw_np_size"                , float)     = 128					// 要和c++的宏一致
 		gw_waterlv2                       ("gw_waterlv2"               , float)     = 65					// 要和c++的宏一致
 
 		// low profile alpha
-		gw_fAlphaRadius                   ("gw_fAlphaRadius"           , float)     = 2000				// 低配水20米外alpha=1
-		gw_fAlphaMin                      ("gw_fAlphaMin"              , float)     = 0.88				// camera处alpha为0.88
+		gw_fAlphaRadius                   ("gw_fAlphaRadius"           , float)     = 2000					// 低配水20米外alpha=1
+		gw_fAlphaMin                      ("gw_fAlphaMin"              , float)     = 0.88					// camera处alpha为0.88
 
 		// grey
-		gw_fGrey                          ("gw_fGrey"                  , float)     = 0					// grey out when dead
+		gw_fGrey                          ("gw_fGrey"                  , float)     = 0						// grey out when dead
 	}
 	SubShader
 	{
@@ -102,6 +102,16 @@
 			float gw_fNoiseWaveHeightDiv;
 			float gw_fNoiseDisplacementX;
 			float gw_fNoiseDisplacementY;
+
+			float4 gw_EyePos;
+			float gw_fRefractRadius;
+			float gw_fRefractMinAlpha;
+			float gw_fNormalUVScale0;
+			float gw_fNormalUVScale1;
+			float4 gw_TexOffsets;
+			float gw_fCausticsUVScale;
+			float gw_fWorldSideLengthX;
+			float gw_fWorldSideLengthY;
 
 			float CalcVertexHeight(float vx, float vy)
 			{
@@ -143,13 +153,15 @@
 			
 			struct v2f
 			{
-				float4 pos		: SV_POSITION;
-				float2 uv		: TEXCOORD0;
-				float4 refl		: TEXCOORD1;
-				float4 normal	: TEXCOORD2;
-				float4 viewvec	: TEXCOORD3; // w = 顶点与镜头的距离 / gw_fRefractRadius
-				
-				UNITY_FOG_COORDS(4) // 这里index要看前面已定义多少个TEXCOORD
+				float4 pos			: SV_POSITION;
+				float2 uv			: TEXCOORD0;
+				float4 refl			: TEXCOORD1;
+				float4 normal		: TEXCOORD2;
+				float4 viewvec		: TEXCOORD3; // w = 顶点与镜头的距离 / gw_fRefractRadius
+				float4 nmapUV		: TEXCOORD4; // xy是第一张uv，zw是第二张uv
+				float4 causticsUV	: TEXCOORD5; // xy是刻蚀图uv，zw是地形高度图uv
+
+				UNITY_FOG_COORDS(6) // 这里index要看前面已定义多少个TEXCOORD
 			};
 			
 			v2f vert(appdata_full v)
@@ -164,15 +176,21 @@
 				v.vertex.y += fHeight;
 				o.normal = CalcVertexNormal(vx, vy);
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-
-
-				//o.viewvec.xyz = o.pos.xyz - gw_EyePos.xyz; // z是高
-				//o.viewvec.w = min(gw_fRefractRadius, length(o.viewvec.xyz)); // 先算顶点到camera的距离
-				//o.viewvec.w = saturate(gw_fRefractMinAlpha + (1 - gw_fRefractMinAlpha) * o.viewvec.w / gw_fRefractRadius); // 再转成比例
-
-
 				o.refl = ComputeScreenPos(o.pos);
 				UNITY_TRANSFER_FOG(o, o.pos);
+
+				o.viewvec.xyz = o.pos.xyz - gw_EyePos.xyz; // z是高
+				o.viewvec.w = min(gw_fRefractRadius, length(o.viewvec.xyz)); // 先算顶点到camera的距离
+				o.viewvec.w = saturate(gw_fRefractMinAlpha + (1 - gw_fRefractMinAlpha) * o.viewvec.w / gw_fRefractRadius); // 再转成比例
+
+				// Scroll normal maps and scale for tiling.
+				o.nmapUV.xy = (o.uv * gw_fNormalUVScale0) + gw_TexOffsets.xy;
+				o.nmapUV.zw = (o.uv * gw_fNormalUVScale1) + gw_TexOffsets.zw;
+
+				// 刻蚀图（需要高度图）
+				o.causticsUV.xy = o.uv * gw_fCausticsUVScale;
+				o.causticsUV.zw = float2((o.pos.x + 4) / gw_fWorldSideLengthX, 1.0f - (o.pos.z - 4) / gw_fWorldSideLengthY); // y是高，所以用o.pos的xz
+
 				return o;
 			}
 
