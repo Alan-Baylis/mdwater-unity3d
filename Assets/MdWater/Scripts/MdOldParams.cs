@@ -95,6 +95,85 @@ namespace MynjenDook
             InitWaterParams();
         }
 
+        public void loadpreset(int n)
+        {
+            switch (n)
+            {
+                case 1:
+                    SetFloat(pParameters.p_fScale, 0.38f);
+                    SetFloat(pParameters.p_fStrength, 0.9f);
+                    SetFloat(pParameters.p_fFalloff, 0.607f);
+                    SetFloat(pParameters.p_fWaterColourR, 0.07f);
+                    SetFloat(pParameters.p_fWaterColourG, 0.11f);
+                    SetFloat(pParameters.p_fWaterColourB, 0.11f);
+                    SetFloat(pParameters.p_fLODbias, 0.0f);
+                    SetBool (pParameters.p_bDiffuseRefl, false);
+                    break;
+                case 2:
+                    SetFloat(pParameters.p_fScale, 0.38f);
+                    SetFloat(pParameters.p_fStrength, 4.0f);
+                    SetFloat(pParameters.p_fFalloff, 0.47f);
+                    SetFloat(pParameters.p_fWaterColourR, 0.13f);
+                    SetFloat(pParameters.p_fWaterColourG, 0.19f);
+                    SetFloat(pParameters.p_fWaterColourB, 0.22f);
+                    SetFloat(pParameters.p_fLODbias, 4.5f);
+                    SetBool (pParameters.p_bDiffuseRefl, false);
+                    break;
+                case 3:
+                    SetFloat(pParameters.p_fScale, 0.38f);
+                    SetFloat(pParameters.p_fStrength, 7.0f);
+                    SetFloat(pParameters.p_fFalloff, 0.53f);
+                    SetFloat(pParameters.p_fWaterColourR, 0.12f);
+                    SetFloat(pParameters.p_fWaterColourG, 0.22f);
+                    SetFloat(pParameters.p_fWaterColourB, 0.29f);
+                    SetFloat(pParameters.p_fLODbias, 10.0f);
+                    SetBool (pParameters.p_bDiffuseRefl, true);
+                    SetFloat(pParameters.p_fSunPosAlpha, 2.91f);
+                    SetFloat(pParameters.p_fSunPosTheta, 0.36f);
+                    SetFloat(pParameters.p_fSunShininess, 1263.0f);
+                    SetFloat(pParameters.p_fSunStrength, 208.0f);
+                    break;
+                case 4:
+                    SetFloat(pParameters.p_fScale, 0.38f);
+                    SetFloat(pParameters.p_fStrength, 4.0f);
+                    SetFloat(pParameters.p_fFalloff, 0.47f);
+                    SetFloat(pParameters.p_fWaterColourR, 0.13f);
+                    SetFloat(pParameters.p_fWaterColourG, 0.19f);
+                    SetFloat(pParameters.p_fWaterColourB, 0.22f);
+                    SetFloat(pParameters.p_fLODbias, 4.5f);
+                    SetBool (pParameters.p_bDiffuseRefl, true);
+                    break;
+                case 5:
+                    SetFloat(pParameters.p_fScale, 0.197f);
+                    SetFloat(pParameters.p_fStrength, 12.9f);
+                    SetFloat(pParameters.p_fFalloff, 0.467f);
+                    SetFloat(pParameters.p_fWaterColourR, 0.12f);
+                    SetFloat(pParameters.p_fWaterColourG, 0.20f);
+                    SetFloat(pParameters.p_fWaterColourB, 0.24f);
+                    SetFloat(pParameters.p_fLODbias, 0.0f);
+                    SetFloat(pParameters.p_fSunPosAlpha, 2.91f);
+                    SetFloat(pParameters.p_fSunPosTheta, 0.88f);
+                    SetFloat(pParameters.p_fSunShininess, 1263.0f);
+                    SetFloat(pParameters.p_fSunStrength, 5270.0f);
+                    SetBool (pParameters.p_bDiffuseRefl, true);
+                    break;
+                case 6:
+                    SetFloat(pParameters.p_fScale, 0.38f);
+                    SetFloat(pParameters.p_fStrength, 11.3f);
+                    SetFloat(pParameters.p_fFalloff, 0.56f);
+                    SetFloat(pParameters.p_fWaterColourR, 0.17f);
+                    SetFloat(pParameters.p_fWaterColourG, 0.27f);
+                    SetFloat(pParameters.p_fWaterColourB, 0.26f);
+                    SetFloat(pParameters.p_fLODbias, 0.0f);
+                    SetFloat(pParameters.p_fSunPosAlpha, 2.91f);
+                    SetFloat(pParameters.p_fSunPosTheta, 0.256f);
+                    SetFloat(pParameters.p_fSunShininess, 700.0f);
+                    SetFloat(pParameters.p_fSunStrength, 200.85f);
+                    SetBool (pParameters.p_bDiffuseRefl, false);
+                    break;
+            }
+        }
+
         private void InitWaterParams()
         {
             if (Params != null && Params.Length > 0) return;
@@ -140,6 +219,18 @@ namespace MynjenDook
             return Params[(int)p].m_bValue;
         }
 
+        public void SetInt(pParameters p, int value)
+        {
+            Params[(int)p].m_iValue = value;
+        }
+        public void SetFloat(pParameters p, float value)
+        {
+            Params[(int)p].m_fValue = value;
+        }
+        public void SetBool(pParameters p, bool value)
+        {
+            Params[(int)p].m_bValue = value;
+        }
 
         [ContextMenu("Test")]
         void Test()
