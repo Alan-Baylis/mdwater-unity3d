@@ -118,6 +118,8 @@ namespace MynjenDook
 
         void Update()
         {
+            //PreRendering();
+
             // update xzh water params
             userparams.UpdateWaterParams();
 
@@ -219,6 +221,57 @@ namespace MynjenDook
 
             m_framecount++;
             m_lasttime = Time.time;
+        }
+
+        private void PreRendering()
+        {
+            // update shader constants
+            Vector4 cam_loc = m_camera.transform.position;
+            cam_loc.w = 1;
+            material.SetVector("gw_EyePos", cam_loc);
+            material.SetVector("gw_TexOffsets", m_kTexOffset);
+            material.SetFloat("gw_fFrameTime", Time.time);
+
+            float waterR = userparams.GetFloat(MdUserParams.UserParams.WaterColorR);
+            float waterG = userparams.GetFloat(MdUserParams.UserParams.WaterColorG);
+            float waterB = userparams.GetFloat(MdUserParams.UserParams.WaterColorB);
+            Color kWaterColor = new Color(waterR, waterG, waterB);
+            material.SetColor("gw_WaterColor", kWaterColor);
+
+            float sunR = userparams.GetFloat(MdUserParams.UserParams.SunColorR);
+            float sunG = userparams.GetFloat(MdUserParams.UserParams.SunColorG);
+            float sunB = userparams.GetFloat(MdUserParams.UserParams.SunColorB);
+            Color kSunColor = new Color(sunR, sunG, sunB);
+            material.SetColor("gw_SunColor", kSunColor);
+
+            // caustics map和normal map每帧换
+            Texture2D pkCausticsTexture = texturing.GetCurrentCausticsTexture();
+            Texture2D pkNormalTexture = texturing.GetCurrentNormalTexture();
+            float fCaustics = texturing.m_bCaustics ? 1.0f : 0.0f;
+            material.SetFloat("gw_fCaustics", fCaustics);
+
+            // grey
+            float fGrey = texturing.m_bGrey ? 1.0f : 0.0f;
+            material.SetFloat("gw_fGrey", fGrey);
+
+            // 设置water的shader和tex
+            string kTechniqueName;
+            if (GetProfile() == 0)
+            {
+                kTechniqueName = (texturing.m_bWireframe ? "Water_xzh_low_wireframe" : "Water_xzh_low");
+            }
+            else
+            {
+                kTechniqueName = (texturing.m_bWireframe ? "Water_xzh_wireframe" : "Water_xzh");
+            }
+
+            material.EnableKeyword(""); // kTechniqueName
+
+            // texture map: reflect refract noise在其他地方
+            material.SetTexture("_NormalTex1", pkNormalTexture);
+            material.SetTexture("_NormalTex0", texturing.m_spTexNormal0);
+            material.SetTexture("_HeightTex", texturing.m_spTexHeight);
+            material.SetTexture("_CausticsTex", pkCausticsTexture);
         }
 
         public void SetupCamera(Camera c)

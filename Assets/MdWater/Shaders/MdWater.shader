@@ -13,7 +13,7 @@
 		// global
 		gw_fFrameTime                   ("gw_fFrameTime"             , float)     = 0
 		gw_EyePos                       ("gw_EyePos"                 , Vector)    = (1, 1, 1, 1)
-		gw_WaterColor                   ("gw_WaterColor"             , Vector)    = (0.12, 0.22, 0.29)
+		gw_WaterColor                   ("gw_WaterColor"             , Color)     = (0.12, 0.22, 0.29, 1.0)
 		gw_fWaveVertexSpacing           ("gw_fWaveVertexSpacing"     , float)     = 10
 		gw_fWaveRatio                   ("gw_fWaveRatio"             , float)     = 0.5
 
@@ -43,7 +43,7 @@
 
 		// sun
 		gw_SunLightDir                  ("gw_SunLightDir"            , Vector)    = (-0.5, 0, -0.1)		// 这里有点奇怪，xy是光的方向的负数，z是光的方向
-		gw_SunColor                     ("gw_SunColor"               , Vector)    = (1.2, 0.4, 0.1)		// 太阳光颜色
+		gw_SunColor                     ("gw_SunColor"               , Color)     = (1.2, 0.4, 0.1, 1)	// 太阳光颜色
 		gw_fSunFactor                   ("gw_fSunFactor"             , float)     = 1.5					// 太阳高光强度
 		gw_fSunPower                    ("gw_fSunPower"              , float)     = 250					// how shiny we want the sun specular term on the water to be.
 		gw_fSunNormalSpacing            ("gw_fSunNormalSpacing"      , float)     = 0.007			    // 
@@ -138,8 +138,9 @@
 				float2 uv		: TEXCOORD0;
 				float4 refl		: TEXCOORD1;
 				float4 normal	: TEXCOORD2;
+				float4 viewvec	: TEXCOORD3; // w = 顶点与镜头的距离 / gw_fRefractRadius
 				
-				UNITY_FOG_COORDS(3) // 这里index要看前面已定义多少个TEXCOORD
+				UNITY_FOG_COORDS(4) // 这里index要看前面已定义多少个TEXCOORD
 			};
 			
 			v2f vert(appdata_full v)
@@ -154,6 +155,13 @@
 				v.vertex.y += fHeight;
 				o.normal = CalcVertexNormal(vx, vy);
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+
+
+				//o.viewvec.xyz = o.pos.xyz - gw_EyePos.xyz; // z是高
+				//o.viewvec.w = min(gw_fRefractRadius, length(o.viewvec.xyz)); // 先算顶点到camera的距离
+				//o.viewvec.w = saturate(gw_fRefractMinAlpha + (1 - gw_fRefractMinAlpha) * o.viewvec.w / gw_fRefractRadius); // 再转成比例
+
+
 				o.refl = ComputeScreenPos(o.pos);
 				UNITY_TRANSFER_FOG(o, o.pos);
 				return o;
