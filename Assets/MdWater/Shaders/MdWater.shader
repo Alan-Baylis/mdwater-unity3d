@@ -74,9 +74,10 @@
 		// grey
 		gw_fGrey                          ("gw_fGrey"                  , float)     = 0						// grey out when dead
 	}
+
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" } //"IgnoreProjector" = "True"
+		Tags { "WaterMode" = "Refractive" "RenderType"="Opaque" } //"IgnoreProjector" = "True"
 		LOD 100
  
 		Pass {
@@ -88,7 +89,8 @@
 			#pragma multi_compile_fog
 
 			#pragma shader_feature WIREFRAME
-			#pragma multi_compile _WPROFILE_HIGH _WPROFILE_LOW
+			#pragma multi_compile _WPROFILE_HIGH _WPROFILE_LOW	// low完全见不得人，最终去掉  todo.ksh
+			#pragma multi_compile WATER_REFRACTIVE WATER_REFLECTIVE WATER_SIMPLE
 
 			#include "UnityCG.cginc"
 			

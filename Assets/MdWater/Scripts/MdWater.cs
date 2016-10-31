@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 
 namespace MynjenDook
 {
@@ -23,6 +24,15 @@ namespace MynjenDook
         private int m_LastRefractFrameCount = 0;                            //
         private Camera m_LastReflectCamera;                                 //
         private Camera m_LastRefractCamera;                                 //
+
+        public enum WaterMode
+        {
+            Simple = 0,
+            Reflective = 1,
+            Refractive = 2,
+        };
+        public WaterMode m_WaterMode = WaterMode.Refractive;                // 普通、仅反射、反射+折射
+        private WaterMode m_HardwareWaterSupport = WaterMode.Refractive;    // 硬件支持最大的mode
 
         private int m_maxProfile = 0;                                       // 设备支持最大profile
         private int m_profile = 0;                                          // 当前profile
@@ -90,6 +100,11 @@ namespace MynjenDook
 
         public void Initialize()
         {
+            // Actual water rendering mode depends on both the current setting AND
+            // the hardware support. There's no point in rendering refraction textures
+            // if they won't be visible in the end.
+            m_HardwareWaterSupport = FindHardwareWaterSupport();
+
             predefinition = GetComponent<MdPredefinition>();
             oldparams = GetComponent<MdOldParams>();
             userparams = GetComponent<MdUserParams>();
@@ -227,6 +242,19 @@ namespace MynjenDook
 
         private void PreRendering()
         {
+            // keyword
+            if (m_profile == 0)
+                Shader.EnableKeyword("_WPROFILE_LOW");
+            else
+                Shader.DisableKeyword("_WPROFILE_LOW");
+            if (texturing.m_bWireframe)
+                material.EnableKeyword("WIREFRAME");
+            // water mode
+            WaterMode mode = SetupWaterModeKeyword();
+            reflect.enabled = mode >= WaterMode.Reflective;
+            refract.enabled = mode >= WaterMode.Refractive;
+
+
             // update shader constants
             Vector4 cam_loc = m_camera.transform.position;
             cam_loc.w = 1;
@@ -255,14 +283,6 @@ namespace MynjenDook
             // grey
             float fGrey = texturing.m_bGrey ? 1.0f : 0.0f;
             material.SetFloat("gw_fGrey", fGrey);
-
-            // 设置water的shader和tex
-            if (m_profile == 0)
-                Shader.EnableKeyword("_WPROFILE_LOW");
-            else
-                Shader.DisableKeyword("_WPROFILE_LOW");
-            if (texturing.m_bWireframe)
-                material.EnableKeyword("WIREFRAME");
 
             // texture map: reflect refract noise在其他地方
             material.SetTexture("_NormalTex1", pkNormalTexture);
@@ -335,6 +355,50 @@ namespace MynjenDook
 
             //GetWater()->Update(0); // todo:kuangsihao
             //m_spXzhWaterParam->SetValue("gw_fNormalUVScale1", profile == 0 ? 35.0f : 10.0f);
+        }
+
+        private WaterMode FindHardwareWaterSupport()
+        {
+            if (!SystemInfo.supportsRenderTextures)
+                return WaterMode.Simple;
+
+            string mode = material.GetTag("WATERMODE", false);
+            if (mode == "Refractive")
+                return WaterMode.Refractive;
+            if (mode == "Reflective")
+                return WaterMode.Reflective;
+
+            return WaterMode.Simple;
+        }
+        private WaterMode GetWaterMode()
+        {
+            if (m_HardwareWaterSupport < m_WaterMode)
+                return m_HardwareWaterSupport;
+            else
+                return m_WaterMode;
+        }
+        private WaterMode SetupWaterModeKeyword()
+        {
+            WaterMode mode = GetWaterMode();
+            switch (mode)
+            {
+                case WaterMode.Simple:
+                    Shader.EnableKeyword("WATER_SIMPLE");
+                    Shader.DisableKeyword("WATER_REFLECTIVE");
+                    Shader.DisableKeyword("WATER_REFRACTIVE");
+                    break;
+                case WaterMode.Reflective:
+                    Shader.DisableKeyword("WATER_SIMPLE");
+                    Shader.EnableKeyword("WATER_REFLECTIVE");
+                    Shader.DisableKeyword("WATER_REFRACTIVE");
+                    break;
+                case WaterMode.Refractive:
+                    Shader.DisableKeyword("WATER_SIMPLE");
+                    Shader.DisableKeyword("WATER_REFLECTIVE");
+                    Shader.EnableKeyword("WATER_REFRACTIVE");
+                    break;
+            }
+            return mode;
         }
 
         public void BeginReflect(bool bBegin)
@@ -484,7 +548,8 @@ namespace MynjenDook
         [ContextMenu("Test")]
         void Test()
         {
-            SetProfile(0);
+            //SetProfile(0);
+            EditorUtility.SetSelectedWireframeHidden(GetComponent<Renderer>(), true);
         }
     }
 }
