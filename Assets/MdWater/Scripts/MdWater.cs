@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+//using UnityEditor;
 
 namespace MynjenDook
 {
@@ -549,7 +549,7 @@ namespace MynjenDook
         void Test()
         {
             //SetProfile(0);
-            EditorUtility.SetSelectedWireframeHidden(GetComponent<Renderer>(), true);
+            //EditorUtility.SetSelectedWireframeHidden(GetComponent<Renderer>(), true);
         }
     }
 }

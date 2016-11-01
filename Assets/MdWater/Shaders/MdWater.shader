@@ -201,13 +201,14 @@
 				float vx = v.color.x;
 				float vy = v.color.y;
 				float fHeight = CalcVertexHeight(vx, vy);
-				v.vertex.y += fHeight;
+				//v.vertex.y += fHeight; // 顶点先不动
 				o.normal = CalcVertexNormal(vx, vy);
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.refl = ComputeScreenPos(o.pos);
 				UNITY_TRANSFER_FOG(o, o.pos);
 
-				o.viewvec.xyz = o.pos.xyz - gw_EyePos.xyz; // z是高 -> y是高
+				float3 worldpos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				o.viewvec.xyz = worldpos - gw_EyePos.xyz; // z是高 -> y是高
 				o.viewvec.w = min(gw_fRefractRadius, length(o.viewvec.xyz)); // 先算顶点到camera的距离
 				o.viewvec.w = saturate(gw_fRefractMinAlpha + (1 - gw_fRefractMinAlpha) * o.viewvec.w / gw_fRefractRadius); // 再转成比例
 
@@ -242,7 +243,7 @@
 				normT.z *= min(1.0f - SUV.y, gw_fNoNoiseScreen) / gw_fNoNoiseScreen;
 
 				// kuangsihao test: 水的深度
-				float terrainHeight = -5;// tex2D(gw_sTerrainHeight, In.causticsUV.zw).x; // zw是高度图uv					// 修改这个来观察caustics
+				float terrainHeight = -2.6;// tex2D(gw_sTerrainHeight, In.causticsUV.zw).x; // zw是高度图uv					// 修改这个来观察caustics
 				float waterDepth = max(-terrainHeight, 0);
 				float d = saturate(waterDepth / gw_fCausticsDepth);
 				//d += (1 - d) * (1.0f - sign(gw_fCaustics));
@@ -275,9 +276,19 @@
 				float3 posY1 = float3(0, noiseNormal.w, +gw_fWaveVertexSpacing);
 				float3 normWave = normalize(cross(posX1 - posX0, posY1 - posY0));
 				float3 FNorm = lerp(normT, normWave, gw_fWaveRatio);
+				FNorm = float3(0, 1, 0); // todo.ksh
 				float FinalFresnel = dot(normalize(-i.viewvec.xyz), FNorm);
-				FinalFresnel = gw_fFresnelBias + gw_fFresnelScale * pow(abs(FinalFresnel), gw_fFresnelPower);
-				FinalFresnel = saturate(FinalFresnel);
+				//FinalFresnel = gw_fFresnelBias + gw_fFresnelScale * pow(abs(FinalFresnel), gw_fFresnelPower);
+				//FinalFresnel = saturate(FinalFresnel);
+				
+				
+				//FinalFresnel = 0.95; // todo.ksh
+				float3 VVV = normalize(-i.viewvec.xyz);
+				FinalFresnel = atan(abs(VVV.y) / sqrt(VVV.x * VVV.x + VVV.z * VVV.z));
+				//FinalFresnel = VVV.x;
+				//FinalFresnel = saturate(length(i.viewvec.xyz) / 100);
+				fixed4 FFF = fixed4(FinalFresnel, 0, 0, 1);
+
 
 				// ApplyWaterFresnel
 				fixed4 finalColor = fixed4(lerp(ReflectionColor.rgb, RefractionColor.rgb, FinalFresnel), 1);
@@ -310,7 +321,7 @@
 				tex = fixed4(0, 0, 1, 1);
 				#endif
 
-
+				return FFF; // todo.ksh
 				return finalColor; // tex *= ReflectionColor // tex = RefractionColor
 			}
 
