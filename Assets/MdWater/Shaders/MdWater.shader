@@ -12,9 +12,13 @@
 
 		// 注意float最大默认值为999999
 		// 标注 * 的是修改过单位，从厘米 -> 米
-		_MainTex                          ("Base (RGB)"                , 2D)        = "white" {}
-		[HideInInspector] _ReflectionTex  (""                          , 2D)        = "white" {}
-		[HideInInspector] _VertTex        ("Vertex Modify"             , 2D)        = "" {}
+		_MainTex                          ("Base (RGB)"                , 2D)        = "white" {}			// todo.ksh: 删除
+		[HideInInspector] _ReflectionTex  ("Reflect Tex"               , 2D)        = "white" {}			// reflect tex
+		[HideInInspector] _RefractionTex  ("Refract Tex"               , 2D)        = "white" {}			// refract tex
+		[HideInInspector] _VertTex        ("Vertex Modify"             , 2D)        = "" {}					// noise tex
+		gw_sNormal0						  ("Normal 0"                  , 2D)		= "white" {}			// normal 0
+		gw_sNormal1						  ("Normal 1"                  , 2D)		= "white" {}			// normal 1
+		gw_sCaustics				      ("Caustics"                  , 2D)		= "white" {}			// caustics
 		
 		// global
 		gw_fFrameTime                     ("gw_fFrameTime"             , float)     = 0
@@ -42,13 +46,13 @@
 
 		// caustics
 		gw_fCausticsUVScale               ("gw_fCausticsUVScale"       , float)     = 20				    // 刻蚀图uv密度
-		gw_fCausticsDepth                 ("gw_fCausticsDepth"         , float)     = 260					// 多深的水才没有刻蚀图
+		gw_fCausticsDepth                 ("gw_fCausticsDepth"         , float)     = 2.6					//  *  多深的水才没有刻蚀图
 		gw_fWorldSideLengthX              ("gw_fWorldSideLengthX"      , float)     = 18432					//  *  整个大世界的宽
 		gw_fWorldSideLengthY              ("gw_fWorldSideLengthY"      , float)     = 18432					//  *  整个大世界的高
 		gw_fCaustics                      ("gw_fCaustics"              , float)     = 1						// 如果是0.0f（通常是因为heightmap初始化失败了），就没有刻蚀图
 
 		// sun
-		gw_SunLightDir                    ("gw_SunLightDir"            , Vector)    = (-0.5, 0, -0.1)		// 这里有点奇怪，xy是光的方向的负数，z是光的方向
+		gw_SunLightDir                    ("gw_SunLightDir"            , Vector)    = (-0.5, 0, -0.1, 0)	// 这里有点奇怪，xy是光的方向的负数，z是光的方向
 		gw_SunColor                       ("gw_SunColor"               , Color)     = (1.2, 0.4, 0.1, 1)	// 太阳光颜色
 		gw_fSunFactor                     ("gw_fSunFactor"             , float)     = 1.5					// 太阳高光强度
 		gw_fSunPower                      ("gw_fSunPower"              , float)     = 250					// how shiny we want the sun specular term on the water to be.
@@ -89,22 +93,26 @@
 			#pragma multi_compile_fog
 
 			#pragma shader_feature WIREFRAME
-			#pragma multi_compile _WPROFILE_HIGH _WPROFILE_LOW	// low完全见不得人，最终去掉  todo.ksh
-			#pragma multi_compile WATER_REFRACTIVE WATER_REFLECTIVE WATER_SIMPLE
+			// low完全见不得人，最终去掉  todo.ksh
+			#pragma multi_compile _WPROFILE_HIGH _WPROFILE_LOW
+			#pragma multi_compile _WATER_REFRACTIVE _WATER_REFLECTIVE _WATER_SIMPLE
 
 			#include "UnityCG.cginc"
 			
 			sampler2D _MainTex;
+			float4 _MainTex_ST;
 			sampler2D _VertTex;
 			sampler2D _ReflectionTex;
-			float4 _MainTex_ST;
+			sampler2D _RefractionTex;
+			sampler2D gw_sNormal0;
+			sampler2D gw_sNormal1;
+			sampler2D gw_sCaustics;
 
 			float gw_np_size;
 			float gw_waterlv2;
 			float gw_fNoiseWaveHeightDiv;
 			float gw_fNoiseDisplacementX;
 			float gw_fNoiseDisplacementY;
-
 			float4 gw_EyePos;
 			float gw_fRefractRadius;
 			float gw_fRefractMinAlpha;
@@ -112,8 +120,26 @@
 			float gw_fNormalUVScale1;
 			float4 gw_TexOffsets;
 			float gw_fCausticsUVScale;
+			float gw_fCausticsDepth;
+			float gw_fCaustics;
 			float gw_fWorldSideLengthX;
 			float gw_fWorldSideLengthY;
+			float gw_fNormalRatio;
+			float gw_fNoNoiseScreen;
+			float gw_fNormalNoise;
+			float4 gw_WaterColor;
+			float gw_fWaveVertexSpacing;
+			float gw_bRefract;
+			float gw_fWaveRatio;
+			float gw_fFresnelBias;
+			float gw_fFresnelScale;
+			float gw_fFresnelPower;
+			float gw_fSunNormalSpacing;
+			float gw_fSunNormalRatio;
+			float gw_fSunFactor;
+			float4 gw_SunLightDir;
+			float gw_fSunPower;
+			float4 gw_SunColor;
 
 			float CalcVertexHeight(float vx, float vy)
 			{
@@ -181,7 +207,7 @@
 				o.refl = ComputeScreenPos(o.pos);
 				UNITY_TRANSFER_FOG(o, o.pos);
 
-				o.viewvec.xyz = o.pos.xyz - gw_EyePos.xyz; // z是高
+				o.viewvec.xyz = o.pos.xyz - gw_EyePos.xyz; // z是高 -> y是高
 				o.viewvec.w = min(gw_fRefractRadius, length(o.viewvec.xyz)); // 先算顶点到camera的距离
 				o.viewvec.w = saturate(gw_fRefractMinAlpha + (1 - gw_fRefractMinAlpha) * o.viewvec.w / gw_fRefractRadius); // 再转成比例
 
@@ -200,12 +226,82 @@
 			{
 				fixed4 tex = tex2D(_MainTex, i.uv);
 
+				// normal
+				float3 n1 = tex2D(gw_sNormal0, i.nmapUV.xy).xzy;
+				float3 n2 = tex2D(gw_sNormal1, i.nmapUV.zw).xzy;
+				// Expand from [0, 1] compressed interval to true [-1, 1] interval.
+				n1 = (n1 - 0.5f) * 2.0f;
+				n2 = (n2 - 0.5f) * 2.0f;
+				float3 normT = normalize(lerp(n1, n2, gw_fNormalRatio));
+
+				// 屏幕边缘不要抖动，这里做一个线性弱化
+				float2 SUV = i.refl.xy / i.refl.w; // SUV: Screen-space UV, 原来的 ProjTexcoord
+				normT.x *= min(SUV.x, gw_fNoNoiseScreen) / gw_fNoNoiseScreen;
+				normT.z *= min(SUV.y, gw_fNoNoiseScreen) / gw_fNoNoiseScreen; // 上边缘可以不用作此修正，可以省ps的一些寄存器slot
+				normT.x *= min(1.0f - SUV.x, gw_fNoNoiseScreen) / gw_fNoNoiseScreen;
+				normT.z *= min(1.0f - SUV.y, gw_fNoNoiseScreen) / gw_fNoNoiseScreen;
+
+				// kuangsihao test: 水的深度
+				float terrainHeight = -5;// tex2D(gw_sTerrainHeight, In.causticsUV.zw).x; // zw是高度图uv					// 修改这个来观察caustics
+				float waterDepth = max(-terrainHeight, 0);
+				float d = saturate(waterDepth / gw_fCausticsDepth);
+				//d += (1 - d) * (1.0f - sign(gw_fCaustics));
+				if (gw_fCaustics == 0.0f)
+				{
+					d = 1.0f;
+				}
+
 				//UNITY_PROJ_COORD：given a 4-component vector, return a texture coordinate suitable for projected texture reads.
 				//On most platforms this returns the given value directly.
-				fixed4 refl = tex2Dproj(_ReflectionTex, UNITY_PROJ_COORD(i.refl)); // 相当于tex2D(_ReflectionTex, i.refl.xy / i.refl.w);
-				tex *= refl;
+				float4 normD = float4(normT.xz * gw_fNormalNoise * i.refl.w, 0, 0);
+				fixed4 ReflectionColor = tex2Dproj(_ReflectionTex, UNITY_PROJ_COORD(i.refl + normD)); // tex2Dproj相当于tex2D(_ReflectionTex, i.refl.xy / i.refl.w);
+				fixed4 RefractionColor = tex2Dproj(_RefractionTex, UNITY_PROJ_COORD(i.refl + normD));
+				RefractionColor.rgb = lerp(RefractionColor.rgb, gw_WaterColor, (d + i.viewvec.w) / 2.0f); // viewvec.w的计算已移到vs
+				fixed3 caustics = tex2D(gw_sCaustics, i.causticsUV.xy /*+ normT.xz * gw_fNormalNoise*/).xyz; // sample刻蚀图时就不用normal扰动了
+				caustics *= saturate(1 - d);
+				RefractionColor.rgb += (sign(gw_fCaustics)) * caustics;
+				if (gw_bRefract == 0.0f)
+				{
+					RefractionColor.rgb = gw_WaterColor;
+				}
 
-				UNITY_APPLY_FOG(i.fogCoord, tex); // UNITY_APPLY_FOG_COLOR(i.fogCoord, tex, fixed4(0, 0, 0, 0));
+				// 4个高度传入ps里算法线
+				float4 noiseNormal = i.normal;
+
+				// 计算此顶点normal和fresnel
+				float3 posX0 = float3(-gw_fWaveVertexSpacing, noiseNormal.x, 0);				// todo.ksh: 这里4行：y才是高
+				float3 posX1 = float3(+gw_fWaveVertexSpacing, noiseNormal.y, 0);
+				float3 posY0 = float3(0, noiseNormal.z, -gw_fWaveVertexSpacing);
+				float3 posY1 = float3(0, noiseNormal.w, +gw_fWaveVertexSpacing);
+				float3 normWave = normalize(cross(posX1 - posX0, posY1 - posY0));
+				float3 FNorm = lerp(normT, normWave, gw_fWaveRatio);
+				float FinalFresnel = dot(normalize(-i.viewvec.xyz), FNorm);
+				FinalFresnel = gw_fFresnelBias + gw_fFresnelScale * pow(abs(FinalFresnel), gw_fFresnelPower);
+				FinalFresnel = saturate(FinalFresnel);
+
+				// ApplyWaterFresnel
+				fixed4 finalColor = fixed4(lerp(ReflectionColor.rgb, RefractionColor.rgb, FinalFresnel), 1);
+
+				// noise重新测试
+
+				// 太阳高光
+				float fSpacing = length(i.viewvec.xyz) * gw_fSunNormalSpacing; // 0.006
+				posX0 = float3(-gw_fWaveVertexSpacing * fSpacing, noiseNormal.x, 0);			// todo.ksh: 这里4行：y才是高
+				posX1 = float3(+gw_fWaveVertexSpacing * fSpacing, noiseNormal.y, 0);
+				posY0 = float3(0, noiseNormal.z, -gw_fWaveVertexSpacing * fSpacing);
+				posY1 = float3(0, noiseNormal.w, +gw_fWaveVertexSpacing * fSpacing);
+				float3 SunNormWave = normalize(cross(posX1 - posX0, posY1 - posY0));
+				float3 SunNorm = lerp(normT, SunNormWave, gw_fSunNormalRatio); // 0.84f
+				float3 SR = normalize(reflect(-i.viewvec.xyz, SunNorm)); // todo.ksh: 这里SunNorm的y是高 reflect怎么写？
+				float3 sunlight = gw_fSunFactor * pow(saturate(dot(SR, normalize(-gw_SunLightDir))), gw_fSunPower) * gw_SunColor;
+				finalColor.rgb += sunlight;
+
+				// fog
+				UNITY_APPLY_FOG(i.fogCoord, finalColor); // UNITY_APPLY_FOG_COLOR(i.fogCoord, tex, fixed4(0, 0, 0, 0));
+				
+
+				//float2 R = i.refl.xy / i.refl.w; //test 可以看看反射、折射贴图的uv（ScreenSpace）
+				//tex = fixed4(R.r, R.g, 0, 1);
 
 				#if WIREFRAME
 				tex = fixed4(1, 0, 0, 1);
@@ -214,7 +310,8 @@
 				tex = fixed4(0, 0, 1, 1);
 				#endif
 
-				return tex;
+
+				return finalColor; // tex *= ReflectionColor // tex = RefractionColor
 			}
 
 			ENDCG

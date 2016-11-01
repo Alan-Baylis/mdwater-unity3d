@@ -285,10 +285,10 @@ namespace MynjenDook
             material.SetFloat("gw_fGrey", fGrey);
 
             // texture map: reflect refract noise在其他地方
-            material.SetTexture("_NormalTex1", pkNormalTexture);
-            material.SetTexture("_NormalTex0", texturing.m_spTexNormal0);
+            material.SetTexture("gw_sNormal1", pkNormalTexture);
+            material.SetTexture("gw_sNormal0", texturing.m_spTexNormal0);
             material.SetTexture("_HeightTex", texturing.m_spTexHeight);
-            material.SetTexture("_CausticsTex", pkCausticsTexture);
+            material.SetTexture("gw_sCaustics", pkCausticsTexture);
         }
 
         public void SetupCamera(Camera c)
@@ -383,19 +383,19 @@ namespace MynjenDook
             switch (mode)
             {
                 case WaterMode.Simple:
-                    Shader.EnableKeyword("WATER_SIMPLE");
-                    Shader.DisableKeyword("WATER_REFLECTIVE");
-                    Shader.DisableKeyword("WATER_REFRACTIVE");
+                    Shader.EnableKeyword("_WATER_SIMPLE");
+                    Shader.DisableKeyword("_WATER_REFLECTIVE");
+                    Shader.DisableKeyword("_WATER_REFRACTIVE");
                     break;
                 case WaterMode.Reflective:
-                    Shader.DisableKeyword("WATER_SIMPLE");
-                    Shader.EnableKeyword("WATER_REFLECTIVE");
-                    Shader.DisableKeyword("WATER_REFRACTIVE");
+                    Shader.DisableKeyword("_WATER_SIMPLE");
+                    Shader.EnableKeyword("_WATER_REFLECTIVE");
+                    Shader.DisableKeyword("_WATER_REFRACTIVE");
                     break;
                 case WaterMode.Refractive:
-                    Shader.DisableKeyword("WATER_SIMPLE");
-                    Shader.DisableKeyword("WATER_REFLECTIVE");
-                    Shader.EnableKeyword("WATER_REFRACTIVE");
+                    Shader.DisableKeyword("_WATER_SIMPLE");
+                    Shader.DisableKeyword("_WATER_REFLECTIVE");
+                    Shader.EnableKeyword("_WATER_REFRACTIVE");
                     break;
             }
             return mode;
