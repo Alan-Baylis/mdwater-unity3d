@@ -83,6 +83,7 @@
 	{
 		Tags { "WaterMode" = "Refractive" "RenderType"="Opaque" } //"IgnoreProjector" = "True"
 		LOD 100
+		ZWrite Off
  
 		Pass {
 			CGPROGRAM
@@ -285,6 +286,9 @@
 				//FinalFresnel = atan(abs(VVV.y) / sqrt(VVV.x * VVV.x + VVV.z * VVV.z));
 				fixed4 FFF = fixed4(FinalFresnel, FinalFresnel, FinalFresnel, 1);
 
+				// 测试depth
+				//float d1 = Linear01Depth(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.refl)).r);
+				FFF = saturate(length(i.viewvec.xyz) / 50);
 
 				// ApplyWaterFresnel
 				fixed4 finalColor = fixed4(lerp(ReflectionColor.rgb, RefractionColor.rgb, FinalFresnel), 1);

@@ -90,7 +90,7 @@ Material:
     - first:
         name: gw_sCaustics
       second:
-        m_Texture: {fileID: 2800000, guid: 93ca3af1687b5134daa929d885536c79, type: 3}
+        m_Texture: {fileID: 2800000, guid: cf5cd530b847fed478f45db3cce82f7b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -102,7 +102,7 @@ Material:
     - first:
         name: gw_sNormal1
       second:
-        m_Texture: {fileID: 2800000, guid: 47e954cbbe5af2246b546aca84d768bf, type: 3}
+        m_Texture: {fileID: 2800000, guid: b192a11bc7b0848428a6328ae8353975, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -177,10 +177,10 @@ Material:
       second: 30000
     - first:
         name: gw_fFrameTime
-      second: 79.78813
+      second: 5.9254913
     - first:
         name: gw_fFresnelBias
-      second: 0.6
+      second: 0.4
     - first:
         name: gw_fFresnelMode
       second: 1
@@ -198,10 +198,10 @@ Material:
       second: 0.03
     - first:
         name: gw_fNoiseDisplacementX
-      second: 30
+      second: 31
     - first:
         name: gw_fNoiseDisplacementY
-      second: 6
+      second: 7
     - first:
         name: gw_fNoiseWaveHeightDiv
       second: 2
@@ -210,7 +210,7 @@ Material:
       second: 0.1
     - first:
         name: gw_fNormalRatio
-      second: 0.51
+      second: 0.5
     - first:
         name: gw_fNormalUVScale0
       second: 15
@@ -237,7 +237,7 @@ Material:
       second: 220
     - first:
         name: gw_fWaveRatio
-      second: 0.51
+      second: 0.5
     - first:
         name: gw_fWaveVertexSpacing
       second: 0.2
@@ -262,7 +262,7 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: gw_EyePos
-      second: {r: 698.8814, g: 4.023115, b: 1029.8088, a: 1}
+      second: {r: 699.2826, g: 3.684466, b: 1026.1067, a: 1}
     - first:
         name: gw_SunColor
       second: {r: 1.2, g: 0.4, b: 0.1, a: 1}
@@ -271,7 +271,7 @@ Material:
       second: {r: -1, g: -0.00000004371139, b: -0.14435619, a: 0}
     - first:
         name: gw_TexOffsets
-      second: {r: 0.79784745, g: 2.393539, b: -0.19892314, a: 1.4967688}
+      second: {r: 0.059228912, g: 0.17768677, b: 0.17038557, a: 0.38884342}
     - first:
         name: gw_WaterColor
       second: {r: 0.12, g: 0.22, b: 0.29, a: 1}
