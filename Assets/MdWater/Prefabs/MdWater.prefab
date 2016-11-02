@@ -401,7 +401,7 @@ MonoBehaviour:
   Water: {fileID: 0}
   m_DisablePixelLights: 1
   m_TextureSize: 1024
-  m_ClipPlaneOffset: 0.01
+  m_ClipPlaneOffset: 0.6
   m_ReflectLayers:
     serializedVersion: 2
     m_Bits: 4294966991

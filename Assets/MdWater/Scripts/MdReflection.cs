@@ -17,7 +17,7 @@ namespace MynjenDook
 
         public bool m_DisablePixelLights = true;
         public int m_TextureSize = 1024;
-        public float m_ClipPlaneOffset = 0.01f; // 0.07f
+        public float m_ClipPlaneOffset = 0.6f; // 0.07f
 
         public LayerMask m_ReflectLayers = -1;
 

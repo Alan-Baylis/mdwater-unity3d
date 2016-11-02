@@ -90,7 +90,7 @@ Material:
     - first:
         name: gw_sCaustics
       second:
-        m_Texture: {fileID: 2800000, guid: 0e54e9c74fa9b6949a48ccda3ada789a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 938740cf1d0be114c9e0cf7eea15a003, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -102,7 +102,7 @@ Material:
     - first:
         name: gw_sNormal1
       second:
-        m_Texture: {fileID: 2800000, guid: ff9aba028a250a7479be401de0d6a856, type: 3}
+        m_Texture: {fileID: 2800000, guid: 073d2c6835fecf14489d4d31639f0b1e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -177,7 +177,7 @@ Material:
       second: 30000
     - first:
         name: gw_fFrameTime
-      second: 30.902098
+      second: 6.1586466
     - first:
         name: gw_fFresnelBias
       second: 0.4
@@ -198,10 +198,10 @@ Material:
       second: 0.03
     - first:
         name: gw_fNoiseDisplacementX
-      second: 3
+      second: 30
     - first:
         name: gw_fNoiseDisplacementY
-      second: 29
+      second: 7
     - first:
         name: gw_fNoiseWaveHeightDiv
       second: 2
@@ -262,7 +262,7 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: gw_EyePos
-      second: {r: 709.5502, g: 2.1709056, b: 993.3414, a: 1}
+      second: {r: 694.0804, g: 3.2949195, b: 1026.4377, a: 1}
     - first:
         name: gw_SunColor
       second: {r: 1.2, g: 0.4, b: 0.1, a: 1}
@@ -271,7 +271,7 @@ Material:
       second: {r: -1, g: -0.00000004371139, b: -0.14435619, a: 0}
     - first:
         name: gw_TexOffsets
-      second: {r: 0.30897337, g: 0.9269194, b: 0.045513466, a: 0.76345927}
+      second: {r: 0.061558306, g: 0.18467487, b: 0.16922085, a: 0.39233723}
     - first:
         name: gw_WaterColor
       second: {r: 0.12, g: 0.22, b: 0.29, a: 1}
