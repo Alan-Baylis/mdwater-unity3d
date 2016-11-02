@@ -108,6 +108,7 @@
 			sampler2D gw_sNormal0;
 			sampler2D gw_sNormal1;
 			sampler2D gw_sCaustics;
+			sampler2D _CameraDepthTexture;
 
 			float gw_np_size;
 			float gw_waterlv2;
@@ -243,10 +244,19 @@
 				normT.x *= min(1.0f - SUV.x, gw_fNoNoiseScreen) / gw_fNoNoiseScreen;
 				normT.z *= min(1.0f - SUV.y, gw_fNoNoiseScreen) / gw_fNoNoiseScreen;
 
+
+				// 测试depth
+				fixed4 FFF;
+				FFF = saturate(length(i.viewvec.xyz) / 50);
+				float d1 = Linear01Depth(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.refl)).r); //Linear01Depth LinearEyeDepth
+				FFF = fixed4(d1, d1, d1, 1);
+
+
 				// kuangsihao test: 水的深度
 				float terrainHeight = -2.6;// tex2D(gw_sTerrainHeight, In.causticsUV.zw).x; // zw是高度图uv					// 修改这个来观察caustics
 				float waterDepth = max(-terrainHeight, 0);
 				float d = saturate(waterDepth / gw_fCausticsDepth);
+				d = saturate(d1 / 0.02353);
 				//d += (1 - d) * (1.0f - sign(gw_fCaustics));
 				if (gw_fCaustics == 0.0f)
 				{
@@ -281,15 +291,11 @@
 				float FinalFresnel = dot(normalize(-i.viewvec.xyz), FNorm);
 				FinalFresnel = gw_fFresnelBias + gw_fFresnelScale * pow(abs(FinalFresnel), gw_fFresnelPower);
 				FinalFresnel = saturate(FinalFresnel);
-				
-				
+
+				//
 				//FinalFresnel = atan(abs(VVV.y) / sqrt(VVV.x * VVV.x + VVV.z * VVV.z));
-				fixed4 FFF = fixed4(FinalFresnel, FinalFresnel, FinalFresnel, 1);
-
-				// 测试depth
-				//float d1 = Linear01Depth(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.refl)).r);
-				FFF = saturate(length(i.viewvec.xyz) / 50);
-
+				FFF = fixed4(FinalFresnel, FinalFresnel, FinalFresnel, 1);
+				
 				// ApplyWaterFresnel
 				fixed4 finalColor = fixed4(lerp(ReflectionColor.rgb, RefractionColor.rgb, FinalFresnel), 1);
 

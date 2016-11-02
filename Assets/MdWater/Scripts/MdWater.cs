@@ -295,6 +295,7 @@ namespace MynjenDook
         {
             Debug.Assert(c != null);
             m_camera = c;
+            m_camera.depthTextureMode = DepthTextureMode.Depth;
         }
 
         private void BuildWaterMeshes()
