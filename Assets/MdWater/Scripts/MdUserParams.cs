@@ -115,7 +115,7 @@ namespace MynjenDook
             Params[(int)UserParams.gw_fCausticsDepth]      = new Param(UserParams.gw_fCausticsDepth.ToString()     , 270.0f,  true);
             Params[(int)UserParams.CausticsSpeed]          = new Param(UserParams.CausticsSpeed.ToString()         , 0.6f,    false);
             Params[(int)UserParams.gw_fWaveVertexSpacing]  = new Param(UserParams.gw_fWaveVertexSpacing.ToString() , 0.2f,    true); // 27
-            Params[(int)UserParams.gw_fWaveRatio]          = new Param(UserParams.gw_fWaveRatio.ToString()         , 0.28f,   true); // 5
+            Params[(int)UserParams.gw_fWaveRatio]          = new Param(UserParams.gw_fWaveRatio.ToString()         , 0.5f,    true); // 5
             Params[(int)UserParams.WaveHeightDiv]          = new Param(UserParams.WaveHeightDiv.ToString()         , 2.0f,    false);
             Params[(int)UserParams.ClipHeight]             = new Param(UserParams.ClipHeight.ToString()            , 80.0f,   false);
             Params[(int)UserParams.SunColorR]              = new Param(UserParams.SunColorR.ToString()             , 1.2f,    false);

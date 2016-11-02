@@ -563,7 +563,7 @@ MonoBehaviour:
     m_Value: 0.5
     m_Shader: 1
   - m_Name: gw_fNormalNoise
-    m_Value: 0.05
+    m_Value: 0.1
     m_Shader: 1
   - m_Name: gw_fNoNoiseScreen
     m_Value: 0.03
@@ -596,7 +596,7 @@ MonoBehaviour:
     m_Value: 0.2
     m_Shader: 1
   - m_Name: gw_fWaveRatio
-    m_Value: 0.28
+    m_Value: 0.5
     m_Shader: 1
   - m_Name: WaveHeightDiv
     m_Value: 2
