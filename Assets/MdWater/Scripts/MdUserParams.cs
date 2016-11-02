@@ -104,7 +104,7 @@ namespace MynjenDook
             Params[(int)UserParams.gw_fNormalUVScale0]     = new Param(UserParams.gw_fNormalUVScale0.ToString()    , 15.0f,   true); // 整数就可以了
             Params[(int)UserParams.gw_fNormalUVScale1]     = new Param(UserParams.gw_fNormalUVScale1.ToString()    , 15.0f,   true); // 整数就可以了
             Params[(int)UserParams.gw_fNormalRatio]        = new Param(UserParams.gw_fNormalRatio.ToString()       , 0.5f,    true);
-            Params[(int)UserParams.gw_fNormalNoise]        = new Param(UserParams.gw_fNormalNoise.ToString()       , 0.05f,   true);
+            Params[(int)UserParams.gw_fNormalNoise]        = new Param(UserParams.gw_fNormalNoise.ToString()       , 0.1f,    true);
             Params[(int)UserParams.gw_fNoNoiseScreen]      = new Param(UserParams.gw_fNoNoiseScreen.ToString()     , 0.03f,   true);
             Params[(int)UserParams.gw_fRefractRadius]      = new Param(UserParams.gw_fRefractRadius.ToString()     , 5000f,   true);
             Params[(int)UserParams.gw_fRefractMinAlpha]    = new Param(UserParams.gw_fRefractMinAlpha.ToString()   , 0.82f,   true);
@@ -114,7 +114,7 @@ namespace MynjenDook
             Params[(int)UserParams.gw_fCausticsUVScale]    = new Param(UserParams.gw_fCausticsUVScale.ToString()   , 30.0f,   true);
             Params[(int)UserParams.gw_fCausticsDepth]      = new Param(UserParams.gw_fCausticsDepth.ToString()     , 270.0f,  true);
             Params[(int)UserParams.CausticsSpeed]          = new Param(UserParams.CausticsSpeed.ToString()         , 0.6f,    false);
-            Params[(int)UserParams.gw_fWaveVertexSpacing]  = new Param(UserParams.gw_fWaveVertexSpacing.ToString() , 12.0f,   true); // 27
+            Params[(int)UserParams.gw_fWaveVertexSpacing]  = new Param(UserParams.gw_fWaveVertexSpacing.ToString() , 0.2f,    true); // 27
             Params[(int)UserParams.gw_fWaveRatio]          = new Param(UserParams.gw_fWaveRatio.ToString()         , 0.28f,   true); // 5
             Params[(int)UserParams.WaveHeightDiv]          = new Param(UserParams.WaveHeightDiv.ToString()         , 2.0f,    false);
             Params[(int)UserParams.ClipHeight]             = new Param(UserParams.ClipHeight.ToString()            , 80.0f,   false);
@@ -127,7 +127,7 @@ namespace MynjenDook
             Params[(int)UserParams.SunHeight]              = new Param(UserParams.SunHeight.ToString()             , 8.3f,    false);
             Params[(int)UserParams.gw_fNoiseUVScale]       = new Param(UserParams.gw_fNoiseUVScale.ToString()      , 128f,    true);
             Params[(int)UserParams.gw_fNoiseWaveHeightDiv] = new Param(UserParams.gw_fNoiseWaveHeightDiv.ToString(), 2.0f,    true);
-            Params[(int)UserParams.gw_fSunNormalSpacing]   = new Param(UserParams.gw_fSunNormalSpacing.ToString()  , 0.007f,  true);
+            Params[(int)UserParams.gw_fSunNormalSpacing]   = new Param(UserParams.gw_fSunNormalSpacing.ToString()  , 0.7f,    true);
             Params[(int)UserParams.gw_fSunNormalRatio]     = new Param(UserParams.gw_fSunNormalRatio.ToString()    , 0.86f,   true);
         }
 

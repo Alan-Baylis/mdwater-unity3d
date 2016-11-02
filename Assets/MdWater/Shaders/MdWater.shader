@@ -24,7 +24,7 @@
 		gw_fFrameTime                     ("gw_fFrameTime"             , float)     = 0
 		gw_EyePos                         ("gw_EyePos"                 , Vector)    = (1, 1, 1, 1)
 		gw_WaterColor                     ("gw_WaterColor"             , Color)     = (0.12, 0.22, 0.29, 1.0)
-		gw_fWaveVertexSpacing             ("gw_fWaveVertexSpacing"     , float)     = 10
+		gw_fWaveVertexSpacing             ("gw_fWaveVertexSpacing"     , float)     = 0.2					// * 原来是10
 		gw_fWaveRatio                     ("gw_fWaveRatio"             , float)     = 0.5
 
 		// normal map
@@ -32,7 +32,7 @@
 		gw_fNormalUVScale0                ("gw_fNormalUVScale0"        , float)     = 2
 		gw_fNormalUVScale1                ("gw_fNormalUVScale1"        , float)     = 2
 		gw_fNormalRatio                   ("gw_fNormalRatio"           , float)     = 0.5					// 2张normal图之间的比例
-		gw_fNormalNoise                   ("gw_fNormalNoise"           , float)     = 0.05				    // normal扰动强度
+		gw_fNormalNoise                   ("gw_fNormalNoise"           , float)     = 0.1				    // normal扰动强度
 		gw_fNoNoiseScreen                 ("gw_fNoNoiseScreen"         , float)     = 0.03				    // normal扰动在屏幕边缘变弱
 
 		// fresnel
@@ -56,7 +56,7 @@
 		gw_SunColor                       ("gw_SunColor"               , Color)     = (1.2, 0.4, 0.1, 1)	// 太阳光颜色
 		gw_fSunFactor                     ("gw_fSunFactor"             , float)     = 1.5					// 太阳高光强度
 		gw_fSunPower                      ("gw_fSunPower"              , float)     = 250					// how shiny we want the sun specular term on the water to be.
-		gw_fSunNormalSpacing              ("gw_fSunNormalSpacing"      , float)     = 0.007					// 
+		gw_fSunNormalSpacing              ("gw_fSunNormalSpacing"      , float)     = 0.7					// *
 		gw_fSunNormalRatio                ("gw_fSunNormalRatio"        , float)     = 0.86					//
 
 		// fog
@@ -201,16 +201,16 @@
 				float vx = v.color.x;
 				float vy = v.color.y;
 				float fHeight = CalcVertexHeight(vx, vy);
-				//v.vertex.y += fHeight; // 顶点先不动
+				v.vertex.y += fHeight; // 顶点先不动
 				o.normal = CalcVertexNormal(vx, vy);
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.refl = ComputeScreenPos(o.pos);
 				UNITY_TRANSFER_FOG(o, o.pos);
 
-				float3 worldpos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				float3 worldpos = mul(unity_ObjectToWorld, v.vertex).xyz;													// 版本升级: _Object2World -> unity_ObjectToWorld
 				o.viewvec.xyz = worldpos - gw_EyePos.xyz; // z是高 -> y是高
 				o.viewvec.w = min(gw_fRefractRadius, length(o.viewvec.xyz)); // 先算顶点到camera的距离
-				o.viewvec.w = saturate(gw_fRefractMinAlpha + (1 - gw_fRefractMinAlpha) * o.viewvec.w / gw_fRefractRadius); // 再转成比例
+				o.viewvec.w = saturate(gw_fRefractMinAlpha + (1 - gw_fRefractMinAlpha) * o.viewvec.w / gw_fRefractRadius);	// 再转成比例
 
 				// Scroll normal maps and scale for tiling.
 				o.nmapUV.xy = (o.uv * gw_fNormalUVScale0) + gw_TexOffsets.xy;
@@ -276,18 +276,14 @@
 				float3 posY1 = float3(0, noiseNormal.w, +gw_fWaveVertexSpacing);
 				float3 normWave = normalize(cross(posX1 - posX0, posY1 - posY0));
 				float3 FNorm = lerp(normT, normWave, gw_fWaveRatio);
-				FNorm = float3(0, 1, 0); // todo.ksh
+				//FNorm = float3(0, 1, 0); // todo.ksh
 				float FinalFresnel = dot(normalize(-i.viewvec.xyz), FNorm);
-				//FinalFresnel = gw_fFresnelBias + gw_fFresnelScale * pow(abs(FinalFresnel), gw_fFresnelPower);
-				//FinalFresnel = saturate(FinalFresnel);
+				FinalFresnel = gw_fFresnelBias + gw_fFresnelScale * pow(abs(FinalFresnel), gw_fFresnelPower);
+				FinalFresnel = saturate(FinalFresnel);
 				
 				
-				//FinalFresnel = 0.95; // todo.ksh
-				float3 VVV = normalize(-i.viewvec.xyz);
-				FinalFresnel = atan(abs(VVV.y) / sqrt(VVV.x * VVV.x + VVV.z * VVV.z));
-				//FinalFresnel = VVV.x;
-				//FinalFresnel = saturate(length(i.viewvec.xyz) / 100);
-				fixed4 FFF = fixed4(FinalFresnel, 0, 0, 1);
+				//FinalFresnel = atan(abs(VVV.y) / sqrt(VVV.x * VVV.x + VVV.z * VVV.z));
+				fixed4 FFF = fixed4(FinalFresnel, FinalFresnel, FinalFresnel, 1);
 
 
 				// ApplyWaterFresnel
@@ -296,16 +292,19 @@
 				// noise重新测试
 
 				// 太阳高光
-				float fSpacing = length(i.viewvec.xyz) * gw_fSunNormalSpacing; // 0.006
-				posX0 = float3(-gw_fWaveVertexSpacing * fSpacing, noiseNormal.x, 0);			// todo.ksh: 这里4行：y才是高
-				posX1 = float3(+gw_fWaveVertexSpacing * fSpacing, noiseNormal.y, 0);
-				posY0 = float3(0, noiseNormal.z, -gw_fWaveVertexSpacing * fSpacing);
-				posY1 = float3(0, noiseNormal.w, +gw_fWaveVertexSpacing * fSpacing);
-				float3 SunNormWave = normalize(cross(posX1 - posX0, posY1 - posY0));
-				float3 SunNorm = lerp(normT, SunNormWave, gw_fSunNormalRatio); // 0.84f
-				float3 SR = normalize(reflect(-i.viewvec.xyz, SunNorm)); // todo.ksh: 这里SunNorm的y是高 reflect怎么写？
-				float3 sunlight = gw_fSunFactor * pow(saturate(dot(SR, normalize(-gw_SunLightDir))), gw_fSunPower) * gw_SunColor;
-				finalColor.rgb += sunlight;
+				if (false)
+				{
+					float fSpacing = length(i.viewvec.xyz) * gw_fSunNormalSpacing; // 0.007 -> 0.7
+					posX0 = float3(-gw_fWaveVertexSpacing * fSpacing, noiseNormal.x, 0);			// todo.ksh: 这里4行：y才是高
+					posX1 = float3(+gw_fWaveVertexSpacing * fSpacing, noiseNormal.y, 0);
+					posY0 = float3(0, noiseNormal.z, -gw_fWaveVertexSpacing * fSpacing);
+					posY1 = float3(0, noiseNormal.w, +gw_fWaveVertexSpacing * fSpacing);
+					float3 SunNormWave = normalize(cross(posX1 - posX0, posY1 - posY0));
+					float3 SunNorm = lerp(normT, SunNormWave, gw_fSunNormalRatio); // 0.84f
+					float3 SR = normalize(reflect(-i.viewvec.xyz, SunNorm)); // todo.ksh: 这里SunNorm的y是高 reflect怎么写？
+					float3 sunlight = gw_fSunFactor * pow(saturate(dot(SR, normalize(-gw_SunLightDir))), gw_fSunPower) * gw_SunColor;
+					finalColor.rgb += sunlight;
+				}
 
 				// fog
 				UNITY_APPLY_FOG(i.fogCoord, finalColor); // UNITY_APPLY_FOG_COLOR(i.fogCoord, tex, fixed4(0, 0, 0, 0));
@@ -321,7 +320,7 @@
 				tex = fixed4(0, 0, 1, 1);
 				#endif
 
-				return FFF; // todo.ksh
+				//return FFF; // todo.ksh
 				return finalColor; // tex *= ReflectionColor // tex = RefractionColor
 			}
 
