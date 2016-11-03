@@ -15,7 +15,7 @@
 		_MainTex                          ("Base (RGB)"                , 2D)        = "white" {}			// todo.ksh: 删除
 		[HideInInspector] _ReflectionTex  ("Reflect Tex"               , 2D)        = "white" {}			// reflect tex
 		[HideInInspector] _RefractionTex  ("Refract Tex"               , 2D)        = "white" {}			// refract tex
-		[HideInInspector] _VertTex        ("Vertex Modify"             , 2D)        = "" {}					// noise tex
+		[HideInInspector] _NoiseTex0      ("Noise Tex 0"               , 2D)        = "" {}					// noise tex 0
 		gw_sNormal0						  ("Normal 0"                  , 2D)		= "white" {}			// normal 0
 		gw_sNormal1						  ("Normal 1"                  , 2D)		= "white" {}			// normal 1
 		gw_sCaustics				      ("Caustics"                  , 2D)		= "white" {}			// caustics
@@ -38,7 +38,7 @@
 		// fresnel
 		gw_fRefractRadius                 ("gw_fRefractRadius"         , float)     = 50				    // *  折射圈: 离镜头很近，折射很强；离镜头远，海水颜色很强
 		gw_fRefractMinAlpha               ("gw_fRefractMinAlpha"       , float)     = 0.82			        // 折射最小alpha
-		gw_fFresnelBias                   ("gw_fFresnelBias"           , float)     = 0.1
+		gw_fFresnelBias                   ("gw_fFresnelBias"           , float)     = 0.7
 		gw_fFresnelScale                  ("gw_fFresnelScale"          , float)     = 1.3
 		gw_fFresnelPower                  ("gw_fFresnelPower"          , float)     = 0.3
 		gw_fFresnelMode                   ("gw_fFresnelMode"           , float)     = 1
@@ -102,7 +102,7 @@
 			
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			sampler2D _VertTex;
+			sampler2D _NoiseTex0;
 			sampler2D _ReflectionTex;
 			sampler2D _RefractionTex;
 			sampler2D gw_sNormal0;
@@ -158,7 +158,7 @@
 				else if (vy >= gw_np_size)
 					vy -= gw_np_size;
 
-				float fHeight = tex2Dlod(_VertTex, float4(vx / gw_np_size, vy / gw_np_size, 0, 0));
+				float fHeight = tex2Dlod(_NoiseTex0, float4(vx / gw_np_size, vy / gw_np_size, 0, 0));
 				fHeight = (fHeight - 0.5) * gw_fNoiseWaveHeightDiv * 2; // gw_fNoiseWaveHeightDiv原来是波浪高度倒数，这里含义变了；以后改名
 				return fHeight;
 			}

@@ -58,6 +58,18 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _NoiseTex0
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _NoiseTex1
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _OcclusionMap
       second:
         m_Texture: {fileID: 0}
@@ -90,7 +102,7 @@ Material:
     - first:
         name: gw_sCaustics
       second:
-        m_Texture: {fileID: 2800000, guid: 0f73ba9ae62adc14b90f30bb7de00fdd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0a79f7a50c707514eaf0a5f8f695765d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -102,7 +114,7 @@ Material:
     - first:
         name: gw_sNormal1
       second:
-        m_Texture: {fileID: 2800000, guid: 95b5ac105140c1d4b9e61aa4f29dd3bd, type: 3}
+        m_Texture: {fileID: 2800000, guid: dcc7dd2771bb0224cb28a3ee843107d5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -177,10 +189,10 @@ Material:
       second: 30000
     - first:
         name: gw_fFrameTime
-      second: 26.3695
+      second: 10.185188
     - first:
         name: gw_fFresnelBias
-      second: 0.4
+      second: 0.7
     - first:
         name: gw_fFresnelMode
       second: 1
@@ -198,10 +210,10 @@ Material:
       second: 0.03
     - first:
         name: gw_fNoiseDisplacementX
-      second: 2
+      second: 29
     - first:
         name: gw_fNoiseDisplacementY
-      second: 28
+      second: 8
     - first:
         name: gw_fNoiseWaveHeightDiv
       second: 2
@@ -262,7 +274,7 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: gw_EyePos
-      second: {r: 708.6335, g: 4.0566897, b: 993.3811, a: 1}
+      second: {r: 693.6184, g: 10.95546, b: 1043.5144, a: 1}
     - first:
         name: gw_SunColor
       second: {r: 1.2, g: 0.4, b: 0.1, a: 1}
@@ -271,7 +283,7 @@ Material:
       second: {r: -1, g: -0.00000004371139, b: -0.14435619, a: 0}
     - first:
         name: gw_TexOffsets
-      second: {r: 0.2636641, g: 0.7909916, b: 0.06816797, a: 0.6954956}
+      second: {r: 0.101744644, g: 0.30523404, b: 0.14912765, a: 0.45261702}
     - first:
         name: gw_WaterColor
       second: {r: 0.12, g: 0.22, b: 0.29, a: 1}
