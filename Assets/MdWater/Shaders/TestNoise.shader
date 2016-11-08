@@ -52,13 +52,15 @@
                 fixed4 col = tex2D(_MainTex, i.uv.xy);
 				float c = 1;
 				
+				// fbm
 				float POWER = 1;
 				float SCALE = 1;
 				float BIAS = 0;
 				float2 p = i.uv.xy;
 				c = POWER*fbm( SCALE*p ) + BIAS;
 
-				c = perlin(i.uv.xy, 1, _Time.y);
+				// perlin
+				//c = perlin(i.uv.xy, 1, _Time.y);
 
 
 
