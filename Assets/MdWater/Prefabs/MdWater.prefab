@@ -266,6 +266,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890115060a63f2345b56fdf4c92f403c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _noiseType: 3
+  _is3D: 1
+  _isFractal: 1
 --- !u!114 &11449362
 MonoBehaviour:
   m_ObjectHideFlags: 1

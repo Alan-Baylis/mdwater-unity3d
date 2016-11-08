@@ -249,6 +249,8 @@ namespace MynjenDook
                 Shader.DisableKeyword("_WPROFILE_LOW");
             if (texturing.m_bWireframe)
                 material.EnableKeyword("WIREFRAME");
+            else
+                material.DisableKeyword("WIREFRAME");
             // water mode
             WaterMode mode = SetupWaterModeKeyword();
             reflect.enabled = mode >= WaterMode.Reflective;

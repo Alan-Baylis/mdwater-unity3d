@@ -17,6 +17,21 @@ namespace MynjenDook
             }
         }
 
+        // shader版的noise生成
+        public enum NoiseType
+        {
+            CpuNoise = 0,
+            ClassicPerlin,
+            PeriodicPerlin,
+            Simplex,
+            SimplexNumericalGrad,
+            SimplexAnalyticalGrad
+        }
+        public NoiseType _noiseType;
+        public bool _is3D;
+        public bool _isFractal;
+
+
         public NoiseMaker m_noiseMaker = null;
 
         enum RenderMode
@@ -49,6 +64,7 @@ namespace MynjenDook
         public void MdUpdate()
         {
             m_noiseMaker.render_geometry();
+            UpdateNoiseShaderKeywords();
         }
 
         public void Initialize(Vector3 inpos, Vector3 n, int maxProfile)
@@ -86,10 +102,52 @@ namespace MynjenDook
             m_noiseMaker = new NoiseMaker(Water, gridsize_x, gridsize_y, maxProfile);
         }
 
-        void set_displacement_amplitude(float amplitude)
+        private void set_displacement_amplitude(float amplitude)
         {
             upper_bound = new Plane(normal, pos + amplitude * normal);
             lower_bound = new Plane(normal, pos - amplitude * normal);
+        }
+
+        private void UpdateNoiseShaderKeywords()
+        {
+            Material material = Water.material;
+
+            string[] strTypes = {
+                "CPUNOISE",
+                "CNOISE",
+                "PNOISE",
+                "SNOISE",
+                "SNOISE_NGRAD",
+                "SNOISE_AGRAD"
+            };
+            for (int i = 0; i < strTypes.Length; i++)
+            {
+                string s = strTypes[i];
+                material.DisableKeyword(s);
+            }
+            material.EnableKeyword(strTypes[(int)_noiseType]);
+            /*
+            if (_noiseType == NoiseType.ClassicPerlin)
+                material.EnableKeyword("CNOISE");
+            else if (_noiseType == NoiseType.PeriodicPerlin)
+                material.EnableKeyword("PNOISE");
+            else if (_noiseType == NoiseType.Simplex)
+                material.EnableKeyword("SNOISE");
+            else if (_noiseType == NoiseType.SimplexNumericalGrad)
+                material.EnableKeyword("SNOISE_NGRAD");
+            else // SimplexAnalyticalGrad
+                material.EnableKeyword("SNOISE_AGRAD"); 
+             */
+
+            if (_is3D)
+                material.EnableKeyword("THREED");
+            else
+                material.DisableKeyword("THREED");
+
+            if (_isFractal)
+                material.EnableKeyword("FRACTAL");
+            else
+                material.DisableKeyword("FRACTAL");
         }
     }
 }
